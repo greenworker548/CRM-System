@@ -1,6 +1,8 @@
-export const Button = ({classVariant, type, onHandler, children}) => {
+import "./Button.scss"
+
+export const Button = ({className, type, onHandler, children}) => {
     return (
-        <button className={classVariant} type={type} onClick={onHandler}>
+        <button className={className} type={type} onClick={onHandler}>
             {children}
         </button>
     )
