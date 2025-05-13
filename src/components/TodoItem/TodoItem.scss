@@ -1,0 +1,40 @@
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #bdc3c7;
+
+  .todo-item__checkbox {
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+  }
+
+  .todo-item__content {
+
+    &.completed {
+      text-decoration: line-through;
+      color: #bdc3c7;
+    }
+  }
+
+  .todo-item__buttons-wrapper {
+    .button.secondary {
+      margin: 0px 5px;
+
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .button.danger {
+      margin: 0px 5px;
+
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+}

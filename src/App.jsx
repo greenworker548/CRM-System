@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react"
+import { getTodos } from "./api/todos"
+import { TodoForm } from "./components/TodoForm/TodoForm"
+import { TodoList } from "./components/TodosList/TodoList"
+import { TodoFilter } from "./components/TodoFilter/TodoFilter"
+import "./App.scss"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [valueOfTodosStatus, setValueOfTodosStatus] = useState({
+    all: 0,
+    inWork: 0,
+    completed: 0,
+  }) // объект с количеством тудушек
+  const [todos, setTodos] = useState([]) // массив тудушек для рендера
+
+  // коллбэк отрисовки тудушек
+  const renderTodos = async (status) => {
+    const response = await getTodos(status)
+
+    setValueOfTodosStatus({
+      all: response.info.all,
+      inWork: response.info.inWork,
+      completed: response.info.completed,
+    })
+
+    setTodos(response.data)
+  }
+
+  // первичная отрисовка тудушек
+  useEffect(() => {
+    renderTodos()
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <h2>Add branch "develop"</h2>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="todo">
+      <TodoForm render={renderTodos} />
+      <TodoFilter
+        render={renderTodos}
+        valueAll={valueOfTodosStatus.all}
+        valueInWork={valueOfTodosStatus.inWork}
+        valueCompleted={valueOfTodosStatus.completed}
+      />
+      <TodoList arrData={todos} render={renderTodos} />
+    </div>
   )
 }
 
