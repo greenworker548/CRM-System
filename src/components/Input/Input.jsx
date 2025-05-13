@@ -1,14 +1,14 @@
 import "./Input.scss"
 
-export const Input = ({ value, onChange}) => {
+export const Input = ({ value, onChange }) => {
   return (
     <label>
-      <input 
-        type="text" 
+      <input
+        type="text"
         className="input"
         value={value}
         placeholder="Write something..."
-        onChange={onChange} 
+        onChange={onChange}
       />
     </label>
   )

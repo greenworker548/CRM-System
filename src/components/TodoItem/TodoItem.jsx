@@ -7,8 +7,8 @@ import { Input } from "../Input/Input"
 import { validateTodoTitle } from "../../utils/validation"
 import { ErrorContent } from "../ErrorContent/ErrorContent"
 import "./TodoItem.scss"
-import iconRemove from '../../assets/icon/icon-remove.png'
-import iconEdit from '../../assets/icon/icon-edit.png'
+import iconRemove from "../../assets/icon/icon-remove.png"
+import iconEdit from "../../assets/icon/icon-edit.png"
 
 export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
   const [popupStatus, setPopupStatus] = useState(false)
@@ -21,7 +21,7 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
   }
 
   const handleOpenPopup = () => {
-    setContentTitle(initialTitle);
+    setContentTitle(initialTitle)
     setError(null)
     setPopupStatus(true)
   }
@@ -30,7 +30,7 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
     event.preventDefault()
 
     const validation = validateTodoTitle(contentTitle)
-      if (!validation.isValid) {
+    if (!validation.isValid) {
       setError(validation.message)
       return
     }
@@ -38,7 +38,7 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
     await changeTodos(id, contentTitle, checked)
     setPopupStatus(false)
     await render()
-  };
+  }
 
   const handleCancelChange = () => {
     setPopupStatus(false)
@@ -52,23 +52,36 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
   }
 
   const closeErrorPopup = () => {
-    setError(null);
+    setError(null)
   }
 
   return (
     <>
       <li className="todo-item">
         <div>
-          <input type="checkbox" className="todo-item__checkbox" checked={checked} onChange={handleCompleteTodoItem} />
+          <input
+            type="checkbox"
+            className="todo-item__checkbox"
+            checked={checked}
+            onChange={handleCompleteTodoItem}
+          />
         </div>
         <p className={`todo-item__content ${checked ? "completed" : ""}`}>
-            {initialTitle}
+          {initialTitle}
         </p>
         <div className="todo-item__buttons-wrapper">
-          <Button type="button" className="button secondary" onHandler={handleOpenPopup}>
+          <Button
+            type="button"
+            className="button secondary"
+            onHandler={handleOpenPopup}
+          >
             <img src={iconEdit} alt="icon" />
           </Button>
-          <Button type="button" className="button danger" onHandler={handleDeleteTodoItem}>
+          <Button
+            type="button"
+            className="button danger"
+            onHandler={handleDeleteTodoItem}
+          >
             <img src={iconRemove} alt="icon" />
           </Button>
         </div>
@@ -79,9 +92,20 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
           <ErrorContent error={error} onClose={closeErrorPopup} />
         ) : (
           <Form onSubmit={handleSaveNewTitle}>
-            <Input value={contentTitle} onChange={(event) => setContentTitle(event.target.value)} />
-            <Button type="submit" className="button secondary">Save</Button>
-            <Button type="button" className="button danger" onHandler={handleCancelChange}>Cancel</Button>
+            <Input
+              value={contentTitle}
+              onChange={(event) => setContentTitle(event.target.value)}
+            />
+            <Button type="submit" className="button secondary">
+              Save
+            </Button>
+            <Button
+              type="button"
+              className="button danger"
+              onHandler={handleCancelChange}
+            >
+              Cancel
+            </Button>
           </Form>
         )}
       </Popup>

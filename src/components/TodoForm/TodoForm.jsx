@@ -9,37 +9,43 @@ import { ErrorContent } from "../ErrorContent/ErrorContent"
 import "./TodoForm.scss"
 
 export const TodoForm = ({ render }) => {
-    const [title, setTitle] = useState("")
-    const [error, setError] = useState(null)
+  const [title, setTitle] = useState("")
+  const [error, setError] = useState(null)
 
-    const handleSubmitForm = async (event) => {
-        event.preventDefault()
+  const handleSubmitForm = async (event) => {
+    event.preventDefault()
 
-        const validation = validateTodoTitle(title);
-        if (!validation.isValid) {
-          setError(validation.message)
-          return
-        }
-        
-        await addTodos(title)
-        await render()
-        setTitle("")
+    const validation = validateTodoTitle(title)
+    if (!validation.isValid) {
+      setError(validation.message)
+      return
     }
 
-    const closeErrorPopup = () => {
-        setError(null)
-    }
+    await addTodos(title)
+    await render()
+    setTitle("")
+  }
 
-    return (
-        <>
-            <Form className="form todo-form" onSubmit={handleSubmitForm}>
-                <Input className="form-inp" value={title} onChange={(event) => setTitle(event.target.value)} />
-                <Button type="submit" className="button primary">Add</Button>
-            </Form>
+  const closeErrorPopup = () => {
+    setError(null)
+  }
 
-            <Popup isOpen={!!error} onClose={closeErrorPopup}>
-                <ErrorContent error={error} onClose={closeErrorPopup} />
-            </Popup>
-        </>
-    )
+  return (
+    <>
+      <Form className="form todo-form" onSubmit={handleSubmitForm}>
+        <Input
+          className="form-inp"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+        />
+        <Button type="submit" className="button primary">
+          Add
+        </Button>
+      </Form>
+
+      <Popup isOpen={!!error}>
+        <ErrorContent error={error} onClose={closeErrorPopup} />
+      </Popup>
+    </>
+  )
 }
