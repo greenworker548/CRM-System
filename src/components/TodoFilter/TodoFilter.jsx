@@ -3,27 +3,38 @@ import "./TodoFilter.scss"
 
 export const TodoFilter = ({
   render,
-  valueAll,
-  valueInWork,
-  valueCompleted,
+  valueOfTodosStatus,
+  activTodosStatus,
+  changeaActivTodosStatus,
 }) => {
+  const handleChangeActivStatus = (status) => {
+    changeaActivTodosStatus(status)
+    render(status)
+  }
+
   return (
     <div className="todo-filter">
       <Button
         type="button"
-        className="button secondary"
-        onHandler={() => render("all")}
-      >{`All (${valueAll})`}</Button>
+        className={`button outline ${
+          activTodosStatus === "all" ? "active" : ""
+        }`}
+        onHandler={() => handleChangeActivStatus("all")}
+      >{`All (${valueOfTodosStatus.all})`}</Button>
       <Button
         type="button"
-        className="button secondary"
-        onHandler={() => render("inWork")}
-      >{`In work (${valueInWork})`}</Button>
+        className={`button outline ${
+          activTodosStatus === "inWork" ? "active" : ""
+        }`}
+        onHandler={() => handleChangeActivStatus("inWork")}
+      >{`In work (${valueOfTodosStatus.inWork})`}</Button>
       <Button
         type="button"
-        className="button secondary"
-        onHandler={() => render("completed")}
-      >{`Completed (${valueCompleted})`}</Button>
+        className={`button outline ${
+          activTodosStatus === "completed" ? "active" : ""
+        }`}
+        onHandler={() => handleChangeActivStatus("completed")}
+      >{`Completed (${valueOfTodosStatus.completed})`}</Button>
     </div>
   )
 }

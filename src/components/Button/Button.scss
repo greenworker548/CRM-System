@@ -1,4 +1,6 @@
 .button {
+  max-width: 300px;
+  min-width: 80px;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
@@ -32,6 +34,20 @@
 
     &:hover {
       background-color: #c0392b;
+    }
+  }
+
+  &.outline {
+    background-color: transparent;
+    border: 1px solid #bdc3c7;
+    color: #34495e;
+
+    &:hover {
+      background-color: #ecf0f1;
+    }
+
+    &.active {
+      box-shadow: 0 0 0 5px rgba(52, 152, 219, 0.2);
     }
   }
 }

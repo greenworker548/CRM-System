@@ -1,16 +1,19 @@
 .todo-item {
   display: flex;
   justify-content: space-between;
-  padding: 16px;
+  padding: 16px 0px;
   border-bottom: 1px solid #bdc3c7;
 
   .todo-item__checkbox {
-    cursor: pointer;
     width: 25px;
     height: 25px;
+    margin: 0px 10px 0px 0px;
+    cursor: pointer;
   }
 
   .todo-item__content {
+    max-width: 600px;
+    word-break: break-word;
 
     &.completed {
       text-decoration: line-through;
@@ -19,8 +22,11 @@
   }
 
   .todo-item__buttons-wrapper {
-    .button.secondary {
-      margin: 0px 5px;
+    min-width: 180px;
+    min-height: 48;
+
+    .button.primary {
+      margin: 0px 10px;
 
       img {
         width: 30px;
@@ -29,8 +35,7 @@
     }
 
     .button.danger {
-      margin: 0px 5px;
-
+      
       img {
         width: 30px;
         height: 30px;

@@ -88,3 +88,7 @@ label {
 legend {
 	display: block;
 }
+
+html {
+  overflow-y: scroll;
+}

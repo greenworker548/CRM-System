@@ -1,0 +1,11 @@
+.todo-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100px;
+
+    button {
+        margin: 0 auto;
+        font-size: 25px;
+    }
+}

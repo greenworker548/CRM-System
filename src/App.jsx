@@ -6,14 +6,14 @@ import { TodoFilter } from "./components/TodoFilter/TodoFilter"
 import "./App.scss"
 
 function App() {
+  const [todos, setTodos] = useState([])
   const [valueOfTodosStatus, setValueOfTodosStatus] = useState({
     all: 0,
     inWork: 0,
     completed: 0,
-  }) // объект с количеством тудушек
-  const [todos, setTodos] = useState([]) // массив тудушек для рендера
+  })
+  const [activTodosStatus, setActivTodosStatus] = useState("all")
 
-  // коллбэк отрисовки тудушек
   const renderTodos = async (status) => {
     const response = await getTodos(status)
 
@@ -26,21 +26,28 @@ function App() {
     setTodos(response.data)
   }
 
-  // первичная отрисовка тудушек
   useEffect(() => {
     renderTodos()
   }, [])
 
+  const changeaActivTodosStatus = (status) => {
+    setActivTodosStatus(status)
+  }
+
   return (
     <div className="todo">
-      <TodoForm render={renderTodos} />
+      <TodoForm activTodosStatus={activTodosStatus} render={renderTodos} />
       <TodoFilter
         render={renderTodos}
-        valueAll={valueOfTodosStatus.all}
-        valueInWork={valueOfTodosStatus.inWork}
-        valueCompleted={valueOfTodosStatus.completed}
+        valueOfTodosStatus={valueOfTodosStatus}
+        activTodosStatus={activTodosStatus}
+        changeaActivTodosStatus={changeaActivTodosStatus}
       />
-      <TodoList arrData={todos} render={renderTodos} />
+      <TodoList
+        arrData={todos}
+        activTodosStatus={activTodosStatus}
+        render={renderTodos}
+      />
     </div>
   )
 }
