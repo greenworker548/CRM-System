@@ -1,6 +1,6 @@
 import { TodoItem } from "../TodoItem/TodoItem"
 
-export const TodoList = ({ arrData, render }) => {
+export const TodoList = ({ arrData, activTodosStatus, render }) => {
   return (
     <ul>
       {arrData.map((item) => (
@@ -8,8 +8,9 @@ export const TodoList = ({ arrData, render }) => {
           id={item.id}
           checked={item.isDone}
           title={item.title}
-          key={item.id}
+          activTodosStatus={activTodosStatus}
           render={render}
+          key={item.id}
         />
       ))}
     </ul>

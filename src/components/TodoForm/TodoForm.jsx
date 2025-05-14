@@ -8,7 +8,7 @@ import { Popup } from "../Popup/Popup"
 import { ErrorContent } from "../ErrorContent/ErrorContent"
 import "./TodoForm.scss"
 
-export const TodoForm = ({ render }) => {
+export const TodoForm = ({ activTodosStatus, render }) => {
   const [title, setTitle] = useState("")
   const [error, setError] = useState(null)
 
@@ -22,7 +22,7 @@ export const TodoForm = ({ render }) => {
     }
 
     await addTodos(title)
-    await render()
+    await render(activTodosStatus)
     setTitle("")
   }
 
@@ -32,14 +32,13 @@ export const TodoForm = ({ render }) => {
 
   return (
     <>
-      <Form className="form todo-form" onSubmit={handleSubmitForm}>
+      <Form className="todo-form" onSubmit={handleSubmitForm}>
         <Input
-          className="form-inp"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
         />
         <Button type="submit" className="button primary">
-          Add
+          Add ToDo item
         </Button>
       </Form>
 

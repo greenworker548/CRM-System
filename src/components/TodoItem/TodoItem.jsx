@@ -2,22 +2,27 @@ import { useState } from "react"
 import { Button } from "../Button/Button"
 import { changeTodos, deleteTodos } from "../../api/todos"
 import { Popup } from "../Popup/Popup"
-import { Form } from "../Form/Form"
-import { Input } from "../Input/Input"
 import { validateTodoTitle } from "../../utils/validation"
 import { ErrorContent } from "../ErrorContent/ErrorContent"
-import "./TodoItem.scss"
+import { EditTodoForm } from "../EditTodoForm/EditTodoForm"
 import iconRemove from "../../assets/icon/icon-remove.png"
 import iconEdit from "../../assets/icon/icon-edit.png"
+import "./TodoItem.scss"
 
-export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
+export const TodoItem = ({
+  id,
+  checked,
+  title: initialTitle,
+  activTodosStatus,
+  render,
+}) => {
   const [popupStatus, setPopupStatus] = useState(false)
   const [contentTitle, setContentTitle] = useState(initialTitle)
   const [error, setError] = useState(null)
 
   const handleCompleteTodoItem = async () => {
     await changeTodos(id, initialTitle, !checked)
-    await render()
+    await render(activTodosStatus)
   }
 
   const handleOpenPopup = () => {
@@ -37,7 +42,7 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
 
     await changeTodos(id, contentTitle, checked)
     setPopupStatus(false)
-    await render()
+    await render(activTodosStatus)
   }
 
   const handleCancelChange = () => {
@@ -48,7 +53,7 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
 
   const handleDeleteTodoItem = async () => {
     await deleteTodos(id)
-    await render()
+    await render(activTodosStatus)
   }
 
   const closeErrorPopup = () => {
@@ -72,7 +77,7 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
         <div className="todo-item__buttons-wrapper">
           <Button
             type="button"
-            className="button secondary"
+            className="button primary"
             onHandler={handleOpenPopup}
           >
             <img src={iconEdit} alt="icon" />
@@ -91,22 +96,12 @@ export const TodoItem = ({ id, checked, title: initialTitle, render }) => {
         {error ? (
           <ErrorContent error={error} onClose={closeErrorPopup} />
         ) : (
-          <Form onSubmit={handleSaveNewTitle}>
-            <Input
-              value={contentTitle}
-              onChange={(event) => setContentTitle(event.target.value)}
-            />
-            <Button type="submit" className="button secondary">
-              Save
-            </Button>
-            <Button
-              type="button"
-              className="button danger"
-              onHandler={handleCancelChange}
-            >
-              Cancel
-            </Button>
-          </Form>
+          <EditTodoForm
+            value={contentTitle}
+            onChange={(event) => setContentTitle(event.target.value)}
+            onSubmit={handleSaveNewTitle}
+            onCancel={handleCancelChange}
+          />
         )}
       </Popup>
     </>

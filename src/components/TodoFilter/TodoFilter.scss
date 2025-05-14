@@ -1,5 +1,10 @@
 .todo-filter {
   display: flex;
   justify-content: space-between;
-  margin: 24px 0px;
+  max-width: 500px;
+  margin: 24px auto;
+
+  button {
+    font-size: 24px;
+  }
 }
