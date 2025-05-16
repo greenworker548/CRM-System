@@ -1,0 +1,45 @@
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0px;
+  border-bottom: 1px solid #bdc3c7;
+
+  .todo-item__checkbox {
+    width: 25px;
+    height: 25px;
+    margin: 0px 10px 0px 0px;
+    cursor: pointer;
+  }
+
+  .todo-item__content {
+    max-width: 600px;
+    word-break: break-word;
+
+    &.completed {
+      text-decoration: line-through;
+      color: #bdc3c7;
+    }
+  }
+
+  .todo-item__buttons-wrapper {
+    min-width: 180px;
+    min-height: 48;
+
+    .button.primary {
+      margin: 0px 10px;
+
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .button.danger {
+      
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+}
