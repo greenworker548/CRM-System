@@ -16,8 +16,8 @@ export const TodoItem = ({
   activTodosStatus,
   render,
 }) => {
-  const [popupStatus, setPopupStatus] = useState(false)
-  const [contentTitle, setContentTitle] = useState(initialTitle)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedTitle, setEditedTitle] = useState(initialTitle)
   const [error, setError] = useState(null)
 
   const handleCompleteTodoItem = async () => {
@@ -25,29 +25,27 @@ export const TodoItem = ({
     await render(activTodosStatus)
   }
 
-  const handleOpenPopup = () => {
-    setContentTitle(initialTitle)
+  const handleStartEditing = () => {
+    setEditedTitle(initialTitle)
     setError(null)
-    setPopupStatus(true)
+    setIsEditing(true)
   }
 
-  const handleSaveNewTitle = async (event) => {
-    event.preventDefault()
-
-    const validation = validateTodoTitle(contentTitle)
+  const handleSave = async () => {
+    const validation = validateTodoTitle(editedTitle)
     if (!validation.isValid) {
       setError(validation.message)
       return
     }
 
-    await changeTodos(id, contentTitle, checked)
-    setPopupStatus(false)
+    await changeTodos(id, editedTitle, checked)
+    setIsEditing(false)
     await render(activTodosStatus)
   }
 
-  const handleCancelChange = () => {
-    setPopupStatus(false)
-    setContentTitle(initialTitle)
+  const handleCancel = () => {
+    setIsEditing(false)
+    setEditedTitle(initialTitle)
     setError(null)
   }
 
@@ -71,39 +69,64 @@ export const TodoItem = ({
             onChange={handleCompleteTodoItem}
           />
         </div>
-        <p className={`todo-item__content ${checked ? "completed" : ""}`}>
-          {initialTitle}
-        </p>
+
+        {isEditing ? (
+          <input
+            type="text"
+            className="todo-item__edit-input"
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+            autoFocus
+          />
+        ) : (
+          <p className={`todo-item__content ${checked ? "completed" : ""}`}>
+            {initialTitle}
+          </p>
+        )}
+
         <div className="todo-item__buttons-wrapper">
-          <Button
-            type="button"
-            className="button primary"
-            onHandler={handleOpenPopup}
-          >
-            <img src={iconEdit} alt="icon" />
-          </Button>
+          {isEditing ? (
+            <>
+              <Button
+                type="button"
+                className="button success"
+                onHandler={handleSave}
+              >
+                <img src={"iconSave"} alt="Save" />
+              </Button>
+              <Button
+                type="button"
+                className="button warning"
+                onHandler={handleCancel}
+              >
+                <img src={"iconCancel"} alt="Cancel" />
+              </Button>
+            </>
+          ) : (
+            <Button
+              type="button"
+              className="button primary"
+              onHandler={handleStartEditing}
+            >
+              <img src={iconEdit} alt="Edit" />
+            </Button>
+          )}
+
           <Button
             type="button"
             className="button danger"
             onHandler={handleDeleteTodoItem}
           >
-            <img src={iconRemove} alt="icon" />
+            <img src={iconRemove} alt="Delete" />
           </Button>
         </div>
       </li>
 
-      <Popup isOpen={popupStatus} onClose={handleCancelChange}>
-        {error ? (
+      {error && (
+        <Popup isOpen={!!error} onClose={closeErrorPopup}>
           <ErrorContent error={error} onClose={closeErrorPopup} />
-        ) : (
-          <EditTodoForm
-            value={contentTitle}
-            onChange={(event) => setContentTitle(event.target.value)}
-            onSubmit={handleSaveNewTitle}
-            onCancel={handleCancelChange}
-          />
-        )}
-      </Popup>
+        </Popup>
+      )}
     </>
   )
 }
