@@ -1,14 +1,11 @@
 import { useState } from "react"
 import { Button } from "../Button/Button"
 import { addTodos } from "../../api/todos"
-import { Form } from "../Form/Form"
-import { Input } from "../Input/Input"
 import { validateTodoTitle } from "../../utils/validation"
-import { Popup } from "../Popup/Popup"
-import { ErrorContent } from "../ErrorContent/ErrorContent"
+import { Modal } from "../Modal/Modal"
 import "./TodoForm.scss"
 
-export const TodoForm = ({ activTodosStatus, render }) => {
+export const TodoForm = ({ fetchTodos }) => {
   const [title, setTitle] = useState("")
   const [error, setError] = useState(null)
 
@@ -22,29 +19,40 @@ export const TodoForm = ({ activTodosStatus, render }) => {
     }
 
     await addTodos(title)
-    await render(activTodosStatus)
+    await fetchTodos()
     setTitle("")
   }
 
-  const closeErrorPopup = () => {
+  const closeErrorModal = () => {
     setError(null)
   }
 
   return (
     <>
-      <Form className="todo-form" onSubmit={handleSubmitForm}>
-        <Input
+      <form className="todo-form" onSubmit={handleSubmitForm}>
+        <input
+          type="text"
+          className="input"
           value={title}
+          placeholder="Write something..."
           onChange={(event) => setTitle(event.target.value)}
+          autoFocus
         />
-        <Button type="submit" className="button primary">
+
+        <Button type="submit" variant="primary">
           Add ToDo item
         </Button>
-      </Form>
+      </form>
 
-      <Popup isOpen={!!error}>
-        <ErrorContent error={error} onClose={closeErrorPopup} />
-      </Popup>
+      <Modal isOpen={!!error}>
+        <div className="error__content">
+          <h3>ERROR!</h3>
+          <p>{error}</p>
+          <Button type="button" onHandler={closeErrorModal} variant="secondary">
+            Ok
+          </Button>
+        </div>
+      </Modal>
     </>
   )
 }

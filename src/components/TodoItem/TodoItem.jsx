@@ -1,32 +1,26 @@
 import { useState } from "react"
 import { Button } from "../Button/Button"
 import { changeTodos, deleteTodos } from "../../api/todos"
-import { Popup } from "../Popup/Popup"
+import { Modal } from "../Modal/Modal"
 import { validateTodoTitle } from "../../utils/validation"
-import { ErrorContent } from "../ErrorContent/ErrorContent"
-import { EditTodoForm } from "../EditTodoForm/EditTodoForm"
 import iconRemove from "../../assets/icon/icon-remove.png"
 import iconEdit from "../../assets/icon/icon-edit.png"
+import iconSave from "../../assets/icon/icon-save.png"
+import iconCancel from "../../assets/icon/icon-cancel.png"
 import "./TodoItem.scss"
 
-export const TodoItem = ({
-  id,
-  checked,
-  title: initialTitle,
-  activTodosStatus,
-  render,
-}) => {
+export const TodoItem = ({ id, checked, title, fetchTodos }) => {
   const [isEditing, setIsEditing] = useState(false)
-  const [editedTitle, setEditedTitle] = useState(initialTitle)
+  const [editedTitle, setEditedTitle] = useState(title)
   const [error, setError] = useState(null)
 
   const handleCompleteTodoItem = async () => {
-    await changeTodos(id, initialTitle, !checked)
-    await render(activTodosStatus)
+    await changeTodos(id, title, !checked)
+    await fetchTodos()
   }
 
   const handleStartEditing = () => {
-    setEditedTitle(initialTitle)
+    setEditedTitle(title)
     setError(null)
     setIsEditing(true)
   }
@@ -40,28 +34,28 @@ export const TodoItem = ({
 
     await changeTodos(id, editedTitle, checked)
     setIsEditing(false)
-    await render(activTodosStatus)
+    await fetchTodos()
   }
 
   const handleCancel = () => {
     setIsEditing(false)
-    setEditedTitle(initialTitle)
+    setEditedTitle(title)
     setError(null)
   }
 
   const handleDeleteTodoItem = async () => {
     await deleteTodos(id)
-    await render(activTodosStatus)
+    await fetchTodos()
   }
 
-  const closeErrorPopup = () => {
+  const closeErrorModal = () => {
     setError(null)
   }
 
   return (
     <>
       <li className="todo-item">
-        <div>
+        <div className="todo-item__checkbox-wrapper">
           <input
             type="checkbox"
             className="todo-item__checkbox"
@@ -73,39 +67,31 @@ export const TodoItem = ({
         {isEditing ? (
           <input
             type="text"
-            className="todo-item__edit-input"
+            className="input"
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
             autoFocus
           />
         ) : (
           <p className={`todo-item__content ${checked ? "completed" : ""}`}>
-            {initialTitle}
+            {title}
           </p>
         )}
 
         <div className="todo-item__buttons-wrapper">
           {isEditing ? (
             <>
-              <Button
-                type="button"
-                className="button success"
-                onHandler={handleSave}
-              >
-                <img src={"iconSave"} alt="Save" />
+              <Button type="button" variant="secondary" onHandler={handleSave}>
+                <img src={iconSave} alt="Save" />
               </Button>
-              <Button
-                type="button"
-                className="button warning"
-                onHandler={handleCancel}
-              >
-                <img src={"iconCancel"} alt="Cancel" />
+              <Button type="button" variant="outline" onHandler={handleCancel}>
+                <img src={iconCancel} alt="Cancel" />
               </Button>
             </>
           ) : (
             <Button
               type="button"
-              className="button primary"
+              variant="primary"
               onHandler={handleStartEditing}
             >
               <img src={iconEdit} alt="Edit" />
@@ -114,7 +100,7 @@ export const TodoItem = ({
 
           <Button
             type="button"
-            className="button danger"
+            variant="danger"
             onHandler={handleDeleteTodoItem}
           >
             <img src={iconRemove} alt="Delete" />
@@ -123,9 +109,19 @@ export const TodoItem = ({
       </li>
 
       {error && (
-        <Popup isOpen={!!error} onClose={closeErrorPopup}>
-          <ErrorContent error={error} onClose={closeErrorPopup} />
-        </Popup>
+        <Modal isOpen={!!error}>
+          <div className="error__content">
+            <h3>ERROR!</h3>
+            <p>{error}</p>
+            <Button
+              type="button"
+              onHandler={closeErrorModal}
+              variant="secondary"
+            >
+              Ok
+            </Button>
+          </div>
+        </Modal>
       )}
     </>
   )

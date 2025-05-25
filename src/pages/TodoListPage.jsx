@@ -14,18 +14,22 @@ const TodoListPage = () => {
   })
   const [activTodosStatus, setActivTodosStatus] = useState("all")
 
-  const renderTodos = async (status) => {
-    const response = await getTodos(status)
-    setValueOfTodosStatus({
-      all: response.info.all,
-      inWork: response.info.inWork,
-      completed: response.info.completed,
-    })
-    setTodos(response.data)
+  const fetchTodos = async (status) => {
+    try {
+      const response = await getTodos(status)
+      setValueOfTodosStatus({
+        all: response.info.all,
+        inWork: response.info.inWork,
+        completed: response.info.completed,
+      })
+      setTodos(response.data)
+    } catch (error) {
+      alert("HTTP error! Restart your browser.")
+    }
   }
 
   useEffect(() => {
-    renderTodos()
+    fetchTodos()
   }, [])
 
   const changeaActivTodosStatus = (status) => {
@@ -34,18 +38,14 @@ const TodoListPage = () => {
 
   return (
     <div className="todo">
-      <TodoForm activTodosStatus={activTodosStatus} render={renderTodos} />
+      <TodoForm fetchTodos={() => fetchTodos(activTodosStatus)} />
       <TodoFilter
-        render={renderTodos}
+        fetchTodos={fetchTodos}
         valueOfTodosStatus={valueOfTodosStatus}
         activTodosStatus={activTodosStatus}
         changeaActivTodosStatus={changeaActivTodosStatus}
       />
-      <TodoList
-        arrData={todos}
-        activTodosStatus={activTodosStatus}
-        render={renderTodos}
-      />
+      <TodoList todo={todos} fetchTodos={() => fetchTodos(activTodosStatus)} />
     </div>
   )
 }

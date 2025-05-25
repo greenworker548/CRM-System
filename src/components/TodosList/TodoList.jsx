@@ -1,15 +1,14 @@
 import { TodoItem } from "../TodoItem/TodoItem"
 
-export const TodoList = ({ arrData, activTodosStatus, render }) => {
+export const TodoList = ({ todo, activTodosStatus, fetchTodos }) => {
   return (
     <ul>
-      {arrData.map((item) => (
+      {todo.map((item) => (
         <TodoItem
           id={item.id}
           checked={item.isDone}
           title={item.title}
-          activTodosStatus={activTodosStatus}
-          render={render}
+          fetchTodos={fetchTodos}
           key={item.id}
         />
       ))}

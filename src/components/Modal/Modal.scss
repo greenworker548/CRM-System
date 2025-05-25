@@ -1,4 +1,4 @@
-.popup__overlay {
+.modal__overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   z-index: 1000;
 }
 
-.popup__content {
+.modal__content {
   min-width: 500px;
   background: #fff;
   padding: 30px;

@@ -1,12 +1,12 @@
-import "./Popup.scss"
+import "./Modal.scss"
 
-export const Popup = ({ isOpen, children }) => {
+export const Modal = ({ isOpen, children }) => {
   if (!isOpen) return null
 
   return (
-    <div className="popup__overlay">
+    <div className="modal__overlay">
       <div
-        className="popup__content"
+        className="modal__content"
         onClick={(event) => event.stopPropagation()}
       >
         {children}
