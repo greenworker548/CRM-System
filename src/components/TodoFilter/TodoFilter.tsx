@@ -1,13 +1,21 @@
 import { Button } from "../Button/Button"
+import { ValueOfTodosStatus, ActivTodosStatus } from "../../types/common"
 import "./TodoFilter.scss"
 
+interface TodoFilterProps {
+  activTodosStatus: ActivTodosStatus,
+  valueOfTodosStatus: ValueOfTodosStatus,
+  fetchTodos: (status: ActivTodosStatus) => Promise<void>,
+  changeaActivTodosStatus: (status: ActivTodosStatus) => void
+}
+
 export const TodoFilter = ({
-  fetchTodos,
-  valueOfTodosStatus,
   activTodosStatus,
+  valueOfTodosStatus,
+  fetchTodos,
   changeaActivTodosStatus,
-}) => {
-  const handleChangeActivStatus = async (status) => {
+}: TodoFilterProps) => {
+  const handleChangeActivStatus = async (status: ActivTodosStatus) => {
     await changeaActivTodosStatus(status)
     await fetchTodos(status)
   }

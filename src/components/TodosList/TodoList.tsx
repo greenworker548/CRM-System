@@ -1,6 +1,12 @@
 import { TodoItem } from "../TodoItem/TodoItem"
+import { Todo } from "../../types/common"
 
-export const TodoList = ({ todo, activTodosStatus, fetchTodos }) => {
+interface TodoListProps {
+  todo: Todo[],
+  fetchTodos: () => Promise<void>,
+}
+
+export const TodoList = ({ todo, fetchTodos }: TodoListProps) => {
   return (
     <ul>
       {todo.map((item) => (

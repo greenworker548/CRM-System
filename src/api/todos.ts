@@ -1,10 +1,12 @@
 import { request } from "./apiBasic"
+import { Todo, ValueOfTodosStatus } from "../types/common"
+import { MetaResponse } from "../types/api"
 
-export async function getTodos(status = "all") {
+export async function getTodos(status: string = "all"): Promise<MetaResponse<Todo, ValueOfTodosStatus>> {
     return request(`/todos?filter=${status}`)
 }
 
-export async function addTodos(title) {
+export async function addTodos(title: string): Promise<Pick<Todo, "isDone" | "title">> {
     return request("/todos", {
         method: 'POST',
         headers: {
@@ -17,7 +19,7 @@ export async function addTodos(title) {
     })
 }
 
-export async function changeTodos(id, title, isDone) {
+export async function changeTodos(id: number, title: string, isDone: boolean): Promise<Pick<Todo, "isDone" | "title">> {
     return request(`/todos/${id}`, {
         method: 'PUT',
         headers: {
@@ -30,8 +32,9 @@ export async function changeTodos(id, title, isDone) {
     })
 }
 
-export async function deleteTodos(id) {
+export async function deleteTodos(id: number): Promise<string> {
     return request(`/todos/${id}`, {
         method: 'DELETE',
     })
 }
+
