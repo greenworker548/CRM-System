@@ -1,6 +1,11 @@
 import "./Modal.scss"
 
-export const Modal = ({ isOpen, children }) => {
+interface ModalProps {
+  isOpen: boolean,
+  children: React.ReactNode
+}
+
+export const Modal = ({ isOpen, children }: ModalProps) => {
   if (!isOpen) return null
 
   return (

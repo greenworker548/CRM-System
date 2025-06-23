@@ -1,27 +1,39 @@
-import { useState } from "react"
+import { useState, FormEvent, ChangeEvent } from "react"
 import { Button } from "../Button/Button"
 import { addTodos } from "../../api/todos"
 import { validateTodoTitle } from "../../utils/validation"
 import { Modal } from "../Modal/Modal"
 import "./TodoForm.scss"
 
-export const TodoForm = ({ fetchTodos }) => {
-  const [title, setTitle] = useState("")
-  const [error, setError] = useState(null)
+interface TodoFormProps {
+  fetchTodos: () => Promise<void>
+}
 
-  const handleSubmitForm = async (event) => {
+export const TodoForm = ({ fetchTodos }: TodoFormProps) => {
+  const [title, setTitle] = useState("")
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const validation = validateTodoTitle(title)
-    if (!validation.isValid) {
+    if (!validation.isValid && validation.message) {
       setError(validation.message)
       return
     }
 
-    await addTodos(title)
-    await fetchTodos()
-    setTitle("")
+    try {
+      await addTodos(title)
+      await fetchTodos()
+      setTitle("")
+    } catch (error) {
+      alert("HTTP error! Restart your browser.")
+    }
   }
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value)
+  };
 
   const closeErrorModal = () => {
     setError(null)
@@ -35,7 +47,7 @@ export const TodoForm = ({ fetchTodos }) => {
           className="input"
           value={title}
           placeholder="Write something..."
-          onChange={(event) => setTitle(event.target.value)}
+          onChange={handleInputChange}
           autoFocus
         />
 

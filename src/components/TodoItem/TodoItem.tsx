@@ -9,13 +9,20 @@ import iconSave from "../../assets/icon/icon-save.png"
 import iconCancel from "../../assets/icon/icon-cancel.png"
 import "./TodoItem.scss"
 
-export const TodoItem = ({ id, checked, title, fetchTodos }) => {
+interface TodoItemProps {
+  id: number,
+  checked: boolean,
+  title: string,
+  fetchTodos: () => Promise<void>,
+}
+
+export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(title)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleCompleteTodoItem = async () => {
-    await changeTodos(id, title, !checked)
+    await changeTodos(id, {title: title, isDone: !checked})
     await fetchTodos()
   }
 
@@ -27,12 +34,12 @@ export const TodoItem = ({ id, checked, title, fetchTodos }) => {
 
   const handleSave = async () => {
     const validation = validateTodoTitle(editedTitle)
-    if (!validation.isValid) {
+    if (!validation.isValid && validation.message) {
       setError(validation.message)
       return
     }
 
-    await changeTodos(id, editedTitle, checked)
+    await changeTodos(id, {title: editedTitle, isDone: checked})
     setIsEditing(false)
     await fetchTodos()
   }

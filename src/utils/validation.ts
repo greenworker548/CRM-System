@@ -1,4 +1,4 @@
-export const validateTodoTitle = (title) => {
+export const validateTodoTitle = (title: string): {isValid: boolean, message?: string} => {
   if (!title) {
     return { isValid: false, message: "Поле обязательно для заполнения." }
   }
