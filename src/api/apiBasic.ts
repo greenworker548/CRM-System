@@ -8,6 +8,7 @@ export async function request(endpoint: string, options?: object) {
     }
 
     const contentLength = response.headers.get("Content-Length")
+
     if (contentLength === "0") {
         return null
     }

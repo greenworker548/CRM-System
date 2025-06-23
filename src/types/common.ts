@@ -5,10 +5,15 @@ export interface Todo {
 	isDone: boolean,
 }
 
-export interface ValueOfTodosStatus { 
+export interface TodoInfo { 
 	all: number,
 	completed: number,
 	inWork: number,
+}
+
+export interface TodoRequest { 
+	title?: string,
+ 	isDone?: boolean, 
 }
 
 export type ActivTodosStatus = "all" | "inWork" | "completed"

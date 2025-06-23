@@ -3,12 +3,12 @@ import { getTodos } from "../api/todos"
 import { TodoForm } from "../components/TodoForm/TodoForm"
 import { TodoList } from "../components/TodosList/TodoList"
 import { TodoFilter } from "../components/TodoFilter/TodoFilter"
-import { Todo, ValueOfTodosStatus, ActivTodosStatus } from "../types/common"
+import { Todo, TodoInfo, ActivTodosStatus } from "../types/common"
 import "./TodoListPage.scss"
 
 const TodoListPage = () => {
   const [todos, setTodos] = useState<Todo[]>([])
-  const [valueOfTodosStatus, setValueOfTodosStatus] = useState<ValueOfTodosStatus>({
+  const [valueOfTodosStatus, setValueOfTodosStatus] = useState<TodoInfo>({
     all: 0,
     inWork: 0,
     completed: 0,

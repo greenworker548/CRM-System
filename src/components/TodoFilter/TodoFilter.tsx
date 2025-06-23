@@ -1,10 +1,10 @@
 import { Button } from "../Button/Button"
-import { ValueOfTodosStatus, ActivTodosStatus } from "../../types/common"
+import { TodoInfo, ActivTodosStatus } from "../../types/common"
 import "./TodoFilter.scss"
 
 interface TodoFilterProps {
   activTodosStatus: ActivTodosStatus,
-  valueOfTodosStatus: ValueOfTodosStatus,
+  valueOfTodosStatus: TodoInfo,
   fetchTodos: (status: ActivTodosStatus) => Promise<void>,
   changeaActivTodosStatus: (status: ActivTodosStatus) => void
 }

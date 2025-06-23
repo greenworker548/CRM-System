@@ -22,7 +22,7 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
   const [error, setError] = useState<string | null>(null)
 
   const handleCompleteTodoItem = async () => {
-    await changeTodos(id, title, !checked)
+    await changeTodos(id, {title: title, isDone: !checked})
     await fetchTodos()
   }
 
@@ -39,7 +39,7 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
       return
     }
 
-    await changeTodos(id, editedTitle, checked)
+    await changeTodos(id, {title: editedTitle, isDone: checked})
     setIsEditing(false)
     await fetchTodos()
   }
