@@ -12,10 +12,10 @@ export async function addTodos(title: string): Promise<Todo> {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
+        data: {
             title: title,
             isDone: false,
-        })
+        }
     })
 }
 
@@ -25,10 +25,10 @@ export async function changeTodos(id: number, {title, isDone}: TodoRequest): Pro
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
+        data: {
             title: title,
             isDone: isDone,
-        })
+        }
     })
 }
 
@@ -37,4 +37,3 @@ export async function deleteTodos(id: number): Promise<string> {
         method: 'DELETE',
     })
 }
-
