@@ -9,9 +9,6 @@ export async function getTodos(status: ActivTodosStatus = "all"): Promise<MetaRe
 export async function addTodos(title: string): Promise<Todo> {
     return request("/todos", {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         data: {
             title: title,
             isDone: false,
@@ -22,9 +19,6 @@ export async function addTodos(title: string): Promise<Todo> {
 export async function changeTodos(id: number, {title, isDone}: TodoRequest): Promise<Todo> {
     return request(`/todos/${id}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         data: {
             title: title,
             isDone: isDone,

@@ -1,10 +1,13 @@
 import axios, { AxiosResponse } from "axios"
 
-const API_BASE_URL: string = "https://easydev.club/api/v1"
+axios.defaults.baseURL = "https://easydev.club/api/v1"
+axios.defaults.timeout = 5000
+axios.defaults.headers.post["Content-Type"] = "application/json"
+axios.defaults.headers.put["Content-Type"] = "application/json"
 
 export const request = async function(endpoint: string, options?: object) {
     const response: AxiosResponse = await axios({
-        url: `${API_BASE_URL}${endpoint}`,
+        url: endpoint,
         ...options,
     })
 
