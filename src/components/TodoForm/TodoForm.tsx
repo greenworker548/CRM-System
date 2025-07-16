@@ -1,8 +1,9 @@
 import { useState, FormEvent, ChangeEvent } from "react"
-import { Button } from "../Button/Button"
 import { addTodos } from "../../api/todos"
 import { validateTodoTitle } from "../../utils/validation"
-import { Modal } from "../Modal/Modal"
+
+import { Button, Input, Form, Modal } from "antd"
+
 import "./TodoForm.scss"
 
 interface TodoFormProps {
@@ -14,9 +15,8 @@ export const TodoForm = ({ fetchTodos }: TodoFormProps) => {
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
     const validation = validateTodoTitle(title)
+
     if (!validation.isValid && validation.message) {
       setError(validation.message)
       return
@@ -41,8 +41,8 @@ export const TodoForm = ({ fetchTodos }: TodoFormProps) => {
 
   return (
     <>
-      <form className="todo-form" onSubmit={handleSubmitForm}>
-        <input
+      <Form className="todo-form" onFinish={handleSubmitForm}>
+        <Input
           type="text"
           className="input"
           value={title}
@@ -51,18 +51,28 @@ export const TodoForm = ({ fetchTodos }: TodoFormProps) => {
           autoFocus
         />
 
-        <Button type="submit" variant="primary">
+        <Button type="primary" htmlType="submit" className="button">
           Add ToDo item
         </Button>
-      </form>
+      </Form>
 
-      <Modal isOpen={!!error}>
+      <Modal
+        open={!!error}
+        onCancel={closeErrorModal}
+        footer={[
+          <Button 
+            type="primary" 
+            key="ok" 
+            onClick={closeErrorModal}
+          >
+            OK
+          </Button>
+        ]}
+        centered
+      >
         <div className="error__content">
           <h3>ERROR!</h3>
           <p>{error}</p>
-          <Button type="button" onHandler={closeErrorModal} variant="secondary">
-            Ok
-          </Button>
         </div>
       </Modal>
     </>
