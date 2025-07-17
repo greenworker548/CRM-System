@@ -1,13 +1,13 @@
 import { useState } from "react"
-import { Button } from "../Button/Button"
 import { changeTodos, deleteTodos } from "../../api/todos"
-import { Modal } from "../Modal/Modal"
 import { validateTodoTitle } from "../../utils/validation"
 import iconRemove from "../../assets/icon/icon-remove.png"
 import iconEdit from "../../assets/icon/icon-edit.png"
 import iconSave from "../../assets/icon/icon-save.png"
 import iconCancel from "../../assets/icon/icon-cancel.png"
 import "./TodoItem.scss"
+
+import { Button, Input, Modal, Checkbox } from "antd"
 
 interface TodoItemProps {
   id: number,
@@ -63,19 +63,18 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
     <>
       <li className="todo-item">
         <div className="todo-item__checkbox-wrapper">
-          <input
-            type="checkbox"
-            className="todo-item__checkbox"
+          <Checkbox
             checked={checked}
             onChange={handleCompleteTodoItem}
           />
         </div>
 
         {isEditing ? (
-          <input
+          <Input
             type="text"
             className="input"
             value={editedTitle}
+            placeholder="Write something..."
             onChange={(e) => setEditedTitle(e.target.value)}
             autoFocus
           />
@@ -88,45 +87,60 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
         <div className="todo-item__buttons-wrapper">
           {isEditing ? (
             <>
-              <Button type="button" variant="secondary" onHandler={handleSave}>
-                <img src={iconSave} alt="Save" />
-              </Button>
-              <Button type="button" variant="outline" onHandler={handleCancel}>
-                <img src={iconCancel} alt="Cancel" />
-              </Button>
+              <Button
+                htmlType="button"
+                type="default"
+                className="button"
+                onClick={handleSave} 
+                icon={<img src={iconSave} alt="Save" />}
+              />
+              <Button
+                htmlType="button"
+                type="default"
+                className="button"
+                onClick={handleCancel}
+                icon={<img src={iconCancel}alt="Cancel" />}
+              />
             </>
           ) : (
             <Button
-              type="button"
-              variant="primary"
-              onHandler={handleStartEditing}
-            >
-              <img src={iconEdit} alt="Edit" />
-            </Button>
+              htmlType="button"
+              type="primary"
+              className="button"
+              onClick={handleStartEditing}
+              icon={<img src={iconEdit} alt="Edit" />}
+            />
           )}
 
           <Button
-            type="button"
-            variant="danger"
-            onHandler={handleDeleteTodoItem}
-          >
-            <img src={iconRemove} alt="Delete" />
-          </Button>
+            htmlType="button"
+            type="primary"
+            className="button"
+            onClick={handleDeleteTodoItem}
+            icon={<img src={iconRemove} alt="Delete" />}
+            danger
+          />
         </div>
       </li>
 
       {error && (
-        <Modal isOpen={!!error}>
+        <Modal 
+          open={!!error}
+          onCancel={closeErrorModal}
+          footer={[
+            <Button 
+              type="primary" 
+              key="ok" 
+              onClick={closeErrorModal}
+            >
+              OK
+            </Button>
+          ]}
+          centered
+          >
           <div className="error__content">
             <h3>ERROR!</h3>
             <p>{error}</p>
-            <Button
-              type="button"
-              onHandler={closeErrorModal}
-              variant="secondary"
-            >
-              Ok
-            </Button>
           </div>
         </Modal>
       )}
