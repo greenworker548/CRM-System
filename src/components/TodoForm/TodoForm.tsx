@@ -1,9 +1,5 @@
-import { useState, FormEvent, ChangeEvent } from "react"
+import { Form, Input, Button } from "antd"
 import { addTodos } from "../../api/todos"
-import { validateTodoTitle } from "../../utils/validation"
-
-import { Button, Input, Form, Modal } from "antd"
-
 import "./TodoForm.scss"
 
 interface TodoFormProps {
@@ -11,70 +7,42 @@ interface TodoFormProps {
 }
 
 export const TodoForm = ({ fetchTodos }: TodoFormProps) => {
-  const [title, setTitle] = useState("")
-  const [error, setError] = useState<string | null>(null)
+  const [form] = Form.useForm()
 
-  const handleSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
-    const validation = validateTodoTitle(title)
-
-    if (!validation.isValid && validation.message) {
-      setError(validation.message)
-      return
-    }
-
+  const handleSubmit = async (values: { title: string }) => {
     try {
-      await addTodos(title)
+      await addTodos(values.title)
       await fetchTodos()
-      setTitle("")
+      form.resetFields()
     } catch (error) {
       alert("HTTP error! Restart your browser.")
     }
   }
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value)
-  };
-
-  const closeErrorModal = () => {
-    setError(null)
-  }
-
   return (
-    <>
-      <Form className="todo-form" onFinish={handleSubmitForm}>
-        <Input
-          type="text"
-          className="input"
-          value={title}
-          placeholder="Write something..."
-          onChange={handleInputChange}
-          autoFocus
-        />
+    <Form
+      form={form}
+      className="todo-form"
+      onFinish={handleSubmit}
+      initialValues={{ title: "" }}
+    >
+      <Form.Item
+        name="title"
+        rules={[
+          { required: true, message: "Поле не может быть пустым!" },
+          { min: 2, message: "Минимум 2 символа!" },
+          { max: 64, message: "Максимум 64 символа!" },
+        ]}
+        className="todo-form__item"
+      >
+        <Input placeholder="Write something..." autoFocus />
+      </Form.Item>
 
+      <Form.Item>
         <Button type="primary" htmlType="submit" className="button">
           Add ToDo item
         </Button>
-      </Form>
-
-      <Modal
-        open={!!error}
-        onCancel={closeErrorModal}
-        footer={[
-          <Button 
-            type="primary" 
-            key="ok" 
-            onClick={closeErrorModal}
-          >
-            OK
-          </Button>
-        ]}
-        centered
-      >
-        <div className="error__content">
-          <h3>ERROR!</h3>
-          <p>{error}</p>
-        </div>
-      </Modal>
-    </>
+      </Form.Item>
+    </Form>
   )
 }
