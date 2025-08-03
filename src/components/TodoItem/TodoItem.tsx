@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Form, Input, Button, Checkbox, message } from "antd";
-import { changeTodos, deleteTodos } from "../../api/todos";
-import iconRemove from "../../assets/icon/icon-remove.png";
-import iconEdit from "../../assets/icon/icon-edit.png";
-import iconSave from "../../assets/icon/icon-save.png";
-import iconCancel from "../../assets/icon/icon-cancel.png";
-import "./TodoItem.scss";
+import { useState } from "react"
+import { Form, Input, Button, Checkbox, message } from "antd"
+import { changeTodos, deleteTodos } from "../../api/todos"
+import iconRemove from "../../assets/icon/icon-remove.png"
+import iconEdit from "../../assets/icon/icon-edit.png"
+import iconSave from "../../assets/icon/icon-save.png"
+import iconCancel from "../../assets/icon/icon-cancel.png"
+import "./TodoItem.scss"
 
 interface TodoItemProps {
   id: number,

@@ -1,18 +1,24 @@
-import axios, { AxiosResponse } from "axios"
+import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios"
 
-axios.defaults.baseURL = "https://easydev.club/api/v1"
-axios.defaults.timeout = 5000
-axios.defaults.headers.post["Content-Type"] = "application/json"
-axios.defaults.headers.put["Content-Type"] = "application/json"
+const apiInstance: AxiosInstance = axios.create({
+    baseURL: "https://easydev.club/api/v1",
+    timeout: 5000,
+    headers: {
+        "Content-Type": "application/json",
+    },
+})
 
-export const request = async function(endpoint: string, options?: object) {
-    const response: AxiosResponse = await axios({
+export const request = async <T = any>(
+    endpoint: string,
+    options?: AxiosRequestConfig
+): Promise<T> => {
+    const response: AxiosResponse<T> = await apiInstance({
         url: endpoint,
         ...options,
     })
 
     if (response.data === null || response.data === undefined) {
-        return null
+        throw new Error("API returned null or undefined")
     }
 
     return response.data
