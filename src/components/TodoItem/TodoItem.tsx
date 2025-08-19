@@ -7,6 +7,18 @@ import iconSave from "../../assets/icon/icon-save.png"
 import iconCancel from "../../assets/icon/icon-cancel.png"
 import "./TodoItem.scss"
 
+const VALIDATION_RULES = {
+  TITLE_MIN_LENGTH: 2,
+  TITLE_MAX_LENGTH: 64,
+}
+
+const ERROR_MESSAGES = {
+  EMPTY_FIELD: "Поле не может быть пустым!",
+  MIN_LENGTH: `Минимум ${VALIDATION_RULES.TITLE_MIN_LENGTH} символа!`,
+  MAX_LENGTH: `Максимум ${VALIDATION_RULES.TITLE_MAX_LENGTH} символов!`,
+  HTTP_ERROR: "HTTP error! Restart your browser.",
+}
+
 interface TodoItemProps {
   id: number,
   checked: boolean,
@@ -15,7 +27,7 @@ interface TodoItemProps {
 }
 
 export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [form] = Form.useForm()
 
   const handleCompleteTodoItem = async () => {
@@ -57,10 +69,17 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
           <Form.Item
             name="title"
             rules={[
-              { required: true, message: "Поле обязательно!" },
-              { min: 2, message: "Минимум 2 символа!" },
-              { max: 64, message: "Максимум 64 символа!" },
+              { required: true, message: ERROR_MESSAGES.EMPTY_FIELD },
+              { 
+                min: VALIDATION_RULES.TITLE_MIN_LENGTH, 
+                message: ERROR_MESSAGES.MIN_LENGTH 
+              },
+              { 
+                max: VALIDATION_RULES.TITLE_MAX_LENGTH, 
+                message: ERROR_MESSAGES.MAX_LENGTH 
+              },
             ]}
+            className="todo-form__item"
           >
             <Input autoFocus />
           </Form.Item>
