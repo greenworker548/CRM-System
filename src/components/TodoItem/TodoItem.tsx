@@ -6,6 +6,7 @@ import iconEdit from "../../assets/icon/icon-edit.png"
 import iconSave from "../../assets/icon/icon-save.png"
 import iconCancel from "../../assets/icon/icon-cancel.png"
 import "./TodoItem.scss"
+import { FormOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons'
 
 const VALIDATION_RULES = {
   TITLE_MIN_LENGTH: 2,
@@ -95,22 +96,22 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
           <>
             <Button
               onClick={handleSave}
-              icon={<img src={iconSave} alt="Save" className="button"/>}
+              icon={<CheckOutlined />}
             />
             <Button
               onClick={handleCancel}
-              icon={<img src={iconCancel} alt="Cancel" />}
+              icon={<StopOutlined />}
             />
           </>
         ) : (
           <Button
             onClick={handleStartEditing}
-            icon={<img src={iconEdit} alt="Edit" />}
+            icon={<FormOutlined />}
           />
         )}
         <Button
           onClick={handleDeleteTodoItem}
-          icon={<img src={iconRemove} alt="Delete" />}
+          icon={<DeleteOutlined />}
           danger
         />
       </div>

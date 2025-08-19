@@ -1,10 +1,13 @@
 import "./ProfilePage.scss"
+import { Typography } from "antd"
+
+const { Title, Text } = Typography
 
 const ProfilePage = () => {
     return (
         <div className="profile">
-            <h3 className="profile__title">Profile Page</h3>
-            <p>Привет</p>
+            <Title level={3}>Profile Page</Title>
+            <Text>Ant Design (default)</Text>
         </div>
     )
 }

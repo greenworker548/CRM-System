@@ -6,20 +6,4 @@
   left: 20px;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-
-  &__link {
-    display: block;
-    padding: 12px 20px;
-    color: #a0a5a7; 
-
-    &:hover {
-      background: #e0e0e0;
-    }
-
-    &.active {
-      background: #1976d2;
-      color: #fff;
-      font-weight: bold;
-    }
-  }
 }
