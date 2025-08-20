@@ -1,13 +1,13 @@
-import { Menu } from 'antd'
-import { UserOutlined, CheckSquareOutlined } from '@ant-design/icons'
-import type { MenuProps } from 'antd'
-import { NavLink } from 'react-router-dom'
-import './Sidebar.scss'
+import { Menu } from "antd"
+import { UserOutlined, CheckSquareOutlined } from "@ant-design/icons"
+import type { MenuProps } from "antd"
+import { NavLink } from "react-router-dom"
+import "./Sidebar.scss"
 
 const Sidebar = () => {
-  const menuItems: MenuProps['items'] = [
+  const menuItems: MenuProps["items"] = [
     {
-      key: '/',
+      key: "/",
       icon: <CheckSquareOutlined />,
       label: (
         <NavLink to="/" className="sidebar__link">
@@ -16,7 +16,7 @@ const Sidebar = () => {
       ),
     },
     {
-      key: '/profile',
+      key: "/profile",
       icon: <UserOutlined />,
       label: (
         <NavLink to="/profile" className="sidebar__link">

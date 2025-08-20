@@ -2,6 +2,7 @@
   display: flex;
   gap: 10px;
   justify-content: space-between;
+  align-items: center;
   padding: 16px 0px;
   border-bottom: 1px solid #bdc3c7;
 
@@ -25,6 +26,10 @@
       text-decoration: line-through;
       color: #bdc3c7;
     }
+  }
+
+  .ant-form-item {
+    min-width: 600px;
   }
   
   .todo-item__buttons-wrapper {

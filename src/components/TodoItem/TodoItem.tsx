@@ -1,10 +1,6 @@
 import { useState } from "react"
 import { Form, Input, Button, Checkbox, message } from "antd"
 import { changeTodos, deleteTodos } from "../../api/todos"
-import iconRemove from "../../assets/icon/icon-remove.png"
-import iconEdit from "../../assets/icon/icon-edit.png"
-import iconSave from "../../assets/icon/icon-save.png"
-import iconCancel from "../../assets/icon/icon-cancel.png"
 import "./TodoItem.scss"
 import { FormOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons'
 
@@ -30,9 +26,10 @@ interface TodoItemProps {
 export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [form] = Form.useForm()
+  const formId = `edit-form-${id}`
 
   const handleCompleteTodoItem = async () => {
-    await changeTodos(id, { title, isDone: !checked })
+    await changeTodos(id, { isDone: !checked })
     await fetchTodos()
   }
 
@@ -41,9 +38,8 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
     setIsEditing(true)
   }
 
-  const handleSave = async () => {
-    const values = await form.validateFields()
-    await changeTodos(id, { title: values.title, isDone: checked })
+  const handleSave = async (values: { title: string }) => {
+    await changeTodos(id, { title: values.title })
     setIsEditing(false)
     await fetchTodos()
   }
@@ -56,7 +52,6 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
   const handleDeleteTodoItem = async () => {
     await deleteTodos(id)
     await fetchTodos()
-    message.success("Задача удалена")
   }
 
   return (
@@ -66,7 +61,11 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
       </div>
 
       {isEditing ? (
-        <Form form={form} component={false}>
+        <Form
+          form={form}
+          onFinish={handleSave}
+          id={formId}
+        >
           <Form.Item
             name="title"
             rules={[
@@ -95,7 +94,8 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
         {isEditing ? (
           <>
             <Button
-              onClick={handleSave}
+              htmlType="submit"
+              form={formId}
               icon={<CheckOutlined />}
             />
             <Button
