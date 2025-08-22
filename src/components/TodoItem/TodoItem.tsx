@@ -1,13 +1,20 @@
 import { useState } from "react"
-import { Button } from "../Button/Button"
+import { Form, Input, Button, Checkbox, message } from "antd"
 import { changeTodos, deleteTodos } from "../../api/todos"
-import { Modal } from "../Modal/Modal"
-import { validateTodoTitle } from "../../utils/validation"
-import iconRemove from "../../assets/icon/icon-remove.png"
-import iconEdit from "../../assets/icon/icon-edit.png"
-import iconSave from "../../assets/icon/icon-save.png"
-import iconCancel from "../../assets/icon/icon-cancel.png"
 import "./TodoItem.scss"
+import { FormOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons'
+
+const VALIDATION_RULES = {
+  TITLE_MIN_LENGTH: 2,
+  TITLE_MAX_LENGTH: 64,
+}
+
+const ERROR_MESSAGES = {
+  EMPTY_FIELD: "Поле не может быть пустым!",
+  MIN_LENGTH: `Минимум ${VALIDATION_RULES.TITLE_MIN_LENGTH} символа!`,
+  MAX_LENGTH: `Максимум ${VALIDATION_RULES.TITLE_MAX_LENGTH} символов!`,
+  HTTP_ERROR: "HTTP error! Restart your browser.",
+}
 
 interface TodoItemProps {
   id: number,
@@ -17,37 +24,29 @@ interface TodoItemProps {
 }
 
 export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedTitle, setEditedTitle] = useState(title)
-  const [error, setError] = useState<string | null>(null)
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [form] = Form.useForm()
+  const formId = `edit-form-${id}`
 
   const handleCompleteTodoItem = async () => {
-    await changeTodos(id, {title: title, isDone: !checked})
+    await changeTodos(id, { isDone: !checked })
     await fetchTodos()
   }
 
   const handleStartEditing = () => {
-    setEditedTitle(title)
-    setError(null)
+    form.setFieldsValue({ title })
     setIsEditing(true)
   }
 
-  const handleSave = async () => {
-    const validation = validateTodoTitle(editedTitle)
-    if (!validation.isValid && validation.message) {
-      setError(validation.message)
-      return
-    }
-
-    await changeTodos(id, {title: editedTitle, isDone: checked})
+  const handleSave = async (values: { title: string }) => {
+    await changeTodos(id, { title: values.title })
     setIsEditing(false)
     await fetchTodos()
   }
 
   const handleCancel = () => {
     setIsEditing(false)
-    setEditedTitle(title)
-    setError(null)
+    form.resetFields()
   }
 
   const handleDeleteTodoItem = async () => {
@@ -55,81 +54,67 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
     await fetchTodos()
   }
 
-  const closeErrorModal = () => {
-    setError(null)
-  }
-
   return (
-    <>
-      <li className="todo-item">
-        <div className="todo-item__checkbox-wrapper">
-          <input
-            type="checkbox"
-            className="todo-item__checkbox"
-            checked={checked}
-            onChange={handleCompleteTodoItem}
-          />
-        </div>
+    <li className="todo-item">
+      <div className="todo-item__checkbox-wrapper">
+        <Checkbox checked={checked} onChange={handleCompleteTodoItem} />
+      </div>
 
-        {isEditing ? (
-          <input
-            type="text"
-            className="input"
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
-            autoFocus
-          />
-        ) : (
-          <p className={`todo-item__content ${checked ? "completed" : ""}`}>
-            {title}
-          </p>
-        )}
-
-        <div className="todo-item__buttons-wrapper">
-          {isEditing ? (
-            <>
-              <Button type="button" variant="secondary" onHandler={handleSave}>
-                <img src={iconSave} alt="Save" />
-              </Button>
-              <Button type="button" variant="outline" onHandler={handleCancel}>
-                <img src={iconCancel} alt="Cancel" />
-              </Button>
-            </>
-          ) : (
-            <Button
-              type="button"
-              variant="primary"
-              onHandler={handleStartEditing}
-            >
-              <img src={iconEdit} alt="Edit" />
-            </Button>
-          )}
-
-          <Button
-            type="button"
-            variant="danger"
-            onHandler={handleDeleteTodoItem}
+      {isEditing ? (
+        <Form
+          form={form}
+          onFinish={handleSave}
+          id={formId}
+        >
+          <Form.Item
+            name="title"
+            rules={[
+              { required: true, message: ERROR_MESSAGES.EMPTY_FIELD },
+              { 
+                min: VALIDATION_RULES.TITLE_MIN_LENGTH, 
+                message: ERROR_MESSAGES.MIN_LENGTH 
+              },
+              { 
+                max: VALIDATION_RULES.TITLE_MAX_LENGTH, 
+                message: ERROR_MESSAGES.MAX_LENGTH 
+              },
+            ]}
+            className="todo-form__item"
           >
-            <img src={iconRemove} alt="Delete" />
-          </Button>
-        </div>
-      </li>
-
-      {error && (
-        <Modal isOpen={!!error}>
-          <div className="error__content">
-            <h3>ERROR!</h3>
-            <p>{error}</p>
-            <Button
-              type="button"
-              onHandler={closeErrorModal}
-              variant="secondary"
-            >
-              Ok
-            </Button>
-          </div>
-        </Modal>
+            <Input autoFocus />
+          </Form.Item>
+        </Form>
+      ) : (
+        <p className={`todo-item__content ${checked ? "completed" : ""}`}>
+          {title}
+        </p>
       )}
-    </>
+
+      <div className="todo-item__buttons-wrapper">
+        {isEditing ? (
+          <>
+            <Button
+              htmlType="submit"
+              form={formId}
+              icon={<CheckOutlined />}
+            />
+            <Button
+              onClick={handleCancel}
+              icon={<StopOutlined />}
+            />
+          </>
+        ) : (
+          <Button
+            onClick={handleStartEditing}
+            icon={<FormOutlined />}
+          />
+        )}
+        <Button
+          onClick={handleDeleteTodoItem}
+          icon={<DeleteOutlined />}
+          danger
+        />
+      </div>
+    </li>
   )
 }

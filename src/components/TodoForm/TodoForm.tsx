@@ -1,70 +1,66 @@
-import { useState, FormEvent, ChangeEvent } from "react"
-import { Button } from "../Button/Button"
+import { Form, Input, Button } from "antd"
 import { addTodos } from "../../api/todos"
-import { validateTodoTitle } from "../../utils/validation"
-import { Modal } from "../Modal/Modal"
 import "./TodoForm.scss"
+
+const VALIDATION_RULES = {
+  TITLE_MIN_LENGTH: 2,
+  TITLE_MAX_LENGTH: 64,
+}
+
+const ERROR_MESSAGES = {
+  EMPTY_FIELD: "Поле не может быть пустым!",
+  MIN_LENGTH: `Минимум ${VALIDATION_RULES.TITLE_MIN_LENGTH} символа!`,
+  MAX_LENGTH: `Максимум ${VALIDATION_RULES.TITLE_MAX_LENGTH} символов!`,
+  HTTP_ERROR: "HTTP error! Restart your browser.",
+}
 
 interface TodoFormProps {
   fetchTodos: () => Promise<void>
 }
 
 export const TodoForm = ({ fetchTodos }: TodoFormProps) => {
-  const [title, setTitle] = useState("")
-  const [error, setError] = useState<string | null>(null)
+  const [form] = Form.useForm()
 
-  const handleSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const validation = validateTodoTitle(title)
-    if (!validation.isValid && validation.message) {
-      setError(validation.message)
-      return
-    }
-
+  const handleSubmit = async (values: { title: string }) => {
     try {
-      await addTodos(title)
+      await addTodos(values.title)
       await fetchTodos()
-      setTitle("")
+      form.resetFields()
     } catch (error) {
       alert("HTTP error! Restart your browser.")
     }
   }
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value)
-  };
-
-  const closeErrorModal = () => {
-    setError(null)
-  }
-
   return (
-    <>
-      <form className="todo-form" onSubmit={handleSubmitForm}>
-        <input
-          type="text"
-          className="input"
-          value={title}
-          placeholder="Write something..."
-          onChange={handleInputChange}
-          autoFocus
-        />
+    <Form
+      form={form}
+      className="todo-form"
+      onFinish={handleSubmit}
+      initialValues={{ title: "" }}
+    >
+      <Form.Item
+        name="title"
+        rules={[
+          { required: true, message: ERROR_MESSAGES.EMPTY_FIELD },
+          { 
+            min: VALIDATION_RULES.TITLE_MIN_LENGTH, 
+            message: ERROR_MESSAGES.MIN_LENGTH 
+          },
+          { 
+            max: VALIDATION_RULES.TITLE_MAX_LENGTH, 
+            message: ERROR_MESSAGES.MAX_LENGTH 
+          },
+        ]}
+        className="todo-form__item"
+      >
+        <Input placeholder="Write something..." autoFocus />
+      </Form.Item>
 
-        <Button type="submit" variant="primary">
+      <Form.Item>
+        <Button type="primary" htmlType="submit" className="button">
           Add ToDo item
         </Button>
-      </form>
-
-      <Modal isOpen={!!error}>
-        <div className="error__content">
-          <h3>ERROR!</h3>
-          <p>{error}</p>
-          <Button type="button" onHandler={closeErrorModal} variant="secondary">
-            Ok
-          </Button>
-        </div>
-      </Modal>
-    </>
+      </Form.Item>
+    </Form>
   )
 }

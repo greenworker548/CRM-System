@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { getTodos } from "../api/todos"
-import { TodoForm } from "../components/TodoForm/TodoForm"
-import { TodoList } from "../components/TodosList/TodoList"
-import { TodoFilter } from "../components/TodoFilter/TodoFilter"
-import { Todo, TodoInfo, ActivTodosStatus } from "../types/common"
+import { getTodos } from "../../api/todos"
+import { TodoForm } from "../../components/TodoForm/TodoForm"
+import { TodoList } from "../../components/TodosList/TodoList"
+import { TodoFilter } from "../../components/TodoFilter/TodoFilter"
+import { Todo, TodoInfo, ActivTodosStatus } from "../../types/common"
 import "./TodoListPage.scss"
 
 const TodoListPage = () => {
@@ -32,8 +32,15 @@ const TodoListPage = () => {
   }
 
   useEffect(() => {
-    fetchTodos()
-  }, [])
+    const fetchTodosWithInterval = async () => {
+      await fetchTodos(activTodosStatus)
+    }
+
+    fetchTodosWithInterval();
+    const intervalId = setInterval(fetchTodosWithInterval, 5000)
+
+    return () => clearInterval(intervalId);
+  }, [activTodosStatus])
 
   const changeaActivTodosStatus = (status: ActivTodosStatus) => {
     setActivTodosStatus(status)

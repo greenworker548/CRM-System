@@ -1,5 +1,5 @@
-import { Button } from "../Button/Button"
 import { TodoInfo, ActivTodosStatus } from "../../types/common"
+import { Button } from "antd"
 import "./TodoFilter.scss"
 
 interface TodoFilterProps {
@@ -23,20 +23,26 @@ export const TodoFilter = ({
   return (
     <div className="todo-filter">
       <Button
-        type="button"
-        variant={`outline ${activTodosStatus === "all" ? "active" : ""}`}
-        onHandler={() => handleChangeActivStatus("all")}
-      >{`All (${valueOfTodosStatus.all})`}</Button>
+        type="default"
+        htmlType="button"
+        className={`button ${activTodosStatus === "all" ? "active" : ""}`}
+        onClick={() => handleChangeActivStatus("all")}
+      >{`All (${valueOfTodosStatus.all})`}
+      </Button>
       <Button
-        type="button"
-        variant={`outline ${activTodosStatus === "inWork" ? "active" : ""}`}
-        onHandler={() => handleChangeActivStatus("inWork")}
-      >{`In work (${valueOfTodosStatus.inWork})`}</Button>
+        type="default"
+        htmlType="button"
+        className={`button ${activTodosStatus === "inWork" ? "active" : ""}`}
+        onClick={() => handleChangeActivStatus("inWork")}
+      >{`In work (${valueOfTodosStatus.inWork})`}
+      </Button>
       <Button
-        type="button"
-        variant={`outline ${activTodosStatus === "completed" ? "active" : ""}`}
-        onHandler={() => handleChangeActivStatus("completed")}
-      >{`Completed (${valueOfTodosStatus.completed})`}</Button>
+        type="default"
+        htmlType="button"
+        className={`button ${activTodosStatus === "completed" ? "active" : ""}`}
+        onClick={() => handleChangeActivStatus("completed")}
+      >{`Completed (${valueOfTodosStatus.completed})`}
+      </Button>
     </div>
   )
 }
