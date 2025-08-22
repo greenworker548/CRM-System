@@ -1,0 +1,22 @@
+.todo-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  &__item {
+    flex-grow: 1;
+    
+    .ant-input {
+      width: 100%;
+      padding: 8px 16px;
+      border: 1px solid #bdc3c7;
+      border-radius: 6px;
+    }
+  }
+
+  .button {
+    width: 200px;
+    height: 40px;
+    font-size: 18px;
+  }
+}

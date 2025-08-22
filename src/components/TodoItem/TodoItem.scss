@@ -1,0 +1,54 @@
+.todo-item {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0px;
+  border-bottom: 1px solid #bdc3c7;
+
+  .todo-item__checkbox-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .ant-checkbox-inner {
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  .todo-item__content {
+    max-width: 600px;
+    padding: 14px 0px;
+    word-break: break-word;
+
+    &.completed {
+      text-decoration: line-through;
+      color: #bdc3c7;
+    }
+  }
+
+  .ant-form-item {
+    min-width: 600px;
+  }
+  
+  .todo-item__buttons-wrapper {
+    display: flex;
+    gap: 10px;
+    
+    .ant-btn {
+      min-width: 80px;
+      min-height: 40px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      svg {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
+}

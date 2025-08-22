@@ -1,0 +1,16 @@
+.todo-filter {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  max-width: 500px;
+  margin: 24px auto;
+
+  .button {
+    width: 170px;
+    font-size: 18px;
+
+    &.active {
+      box-shadow: 0 0 0 5px rgba(52, 152, 219, 0.2);
+    }
+  }
+}
