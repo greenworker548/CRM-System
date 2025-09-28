@@ -16,4 +16,4 @@ export interface TodoRequest {
 	isDone?: boolean,
 }
 
-export type ActivTodosStatus = "all" | "inWork" | "completed"
+export type ActivTodosStatus = "all" | "inWork" |"completed"

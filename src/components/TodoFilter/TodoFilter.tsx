@@ -3,9 +3,9 @@ import { Button } from "antd"
 import "./TodoFilter.scss"
 
 interface TodoFilterProps {
-  activTodosStatus: ActivTodosStatus,
-  valueOfTodosStatus: TodoInfo,
-  fetchTodos: (status: ActivTodosStatus) => Promise<void>,
+  activTodosStatus: ActivTodosStatus
+  valueOfTodosStatus: TodoInfo
+  fetchTodos: (status: ActivTodosStatus) => Promise<void>
   changeaActivTodosStatus: (status: ActivTodosStatus) => void
 }
 
@@ -27,21 +27,24 @@ export const TodoFilter = ({
         htmlType="button"
         className={`button ${activTodosStatus === "all" ? "active" : ""}`}
         onClick={() => handleChangeActivStatus("all")}
-      >{`All (${valueOfTodosStatus.all})`}
+      >
+        {`All (${valueOfTodosStatus.all})`}
       </Button>
       <Button
         type="default"
         htmlType="button"
         className={`button ${activTodosStatus === "inWork" ? "active" : ""}`}
         onClick={() => handleChangeActivStatus("inWork")}
-      >{`In work (${valueOfTodosStatus.inWork})`}
+      >
+        {`In work (${valueOfTodosStatus.inWork})`}
       </Button>
       <Button
         type="default"
         htmlType="button"
         className={`button ${activTodosStatus === "completed" ? "active" : ""}`}
         onClick={() => handleChangeActivStatus("completed")}
-      >{`Completed (${valueOfTodosStatus.completed})`}
+      >
+        {`Completed (${valueOfTodosStatus.completed})`}
       </Button>
     </div>
   )

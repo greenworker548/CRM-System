@@ -3,11 +3,11 @@ import { MetaResponse } from "../types/api"
 import axios, { AxiosInstance } from "axios"
 
 const apiInstance: AxiosInstance = axios.create({
-    baseURL: "https://easydev.club/api/v1",
-    timeout: 5000,
-    headers: {
-        "Content-Type": "application/json",
-    },
+  baseURL: "https://easydev.club/api/v1",
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 })
 
 export async function getTodos(

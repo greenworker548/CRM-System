@@ -31,7 +31,7 @@ const Sidebar = () => {
       <Menu
         mode="inline"
         items={menuItems}
-        defaultSelectedKeys={['/']}
+        // defaultSelectedKeys={['/']}
       />
     </div>
   )

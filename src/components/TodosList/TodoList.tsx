@@ -2,8 +2,8 @@ import { TodoItem } from "../TodoItem/TodoItem"
 import { Todo } from "../../types/common"
 
 interface TodoListProps {
-  todo: Todo[],
-  fetchTodos: () => Promise<void>,
+  todo: Todo[]
+  fetchTodos: () => Promise<void>
 }
 
 export const TodoList = ({ todo, fetchTodos }: TodoListProps) => {
