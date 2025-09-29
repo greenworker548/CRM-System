@@ -23,15 +23,41 @@ apiAuthInstance.interceptors.request.use((config) => {
   return config
 })
 
+apiAuthInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response.status === 401) {
+      const refToken = localStorage.getItem("refreshToken")
+
+      if (!refToken) {
+        logout()
+        return Promise.reject(error)
+      }
+
+      try {
+        const newTokens = await refreshToken({ refreshToken: refToken })
+
+        localStorage.setItem("accessToken", newTokens.accessToken)
+        localStorage.setItem("refreshToken", newTokens.refreshToken)
+
+        error.config.headers.Authorization = `Bearer ${newTokens.accessToken}`
+
+        return apiAuthInstance.request(error.config)
+      } catch (refreshError) {
+        logout()
+      }
+    }
+    return Promise.reject(error)
+  }
+)
+
 export async function signup(userData: UserRegistration): Promise<Profile> {
   const response = await apiAuthInstance.post("/auth/signup", userData)
-  console.log(response.data)
   return response.data
 }
 
 export async function signin(credentials: AuthData): Promise<Token> {
   const response = await apiAuthInstance.post("/auth/signin", credentials)
-  console.log(response.data)
   return response.data
 }
 

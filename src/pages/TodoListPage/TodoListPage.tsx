@@ -3,7 +3,7 @@ import { getTodos } from "../../api/todos"
 import { TodoForm } from "../../components/TodoForm/TodoForm"
 import { TodoList } from "../../components/TodosList/TodoList"
 import { TodoFilter } from "../../components/TodoFilter/TodoFilter"
-import { Todo, TodoInfo, ActivTodosStatus } from "../../types/common"
+import { Todo, TodoInfo, ActivTodosStatus } from "../../types/todo"
 import "./TodoListPage.scss"
 
 const TodoListPage = () => {
@@ -13,16 +13,17 @@ const TodoListPage = () => {
     inWork: 0,
     completed: 0,
   })
-  const [activTodosStatus, setActivTodosStatus] = useState<ActivTodosStatus>("all")
+  const [activTodosStatus, setActivTodosStatus] =
+    useState<ActivTodosStatus>("all")
 
   const fetchTodos = async (status?: ActivTodosStatus): Promise<void> => {
     try {
       const response = await getTodos(status)
       if (response.info) {
         setValueOfTodosStatus({
-        all: response.info.all,
-        inWork: response.info.inWork,
-        completed: response.info.completed,
+          all: response.info.all,
+          inWork: response.info.inWork,
+          completed: response.info.completed,
         })
       }
       setTodos(response.data)
@@ -36,10 +37,10 @@ const TodoListPage = () => {
       await fetchTodos(activTodosStatus)
     }
 
-    fetchTodosWithInterval();
+    fetchTodosWithInterval()
     const intervalId = setInterval(fetchTodosWithInterval, 5000)
 
-    return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId)
   }, [activTodosStatus])
 
   const changeaActivTodosStatus = (status: ActivTodosStatus) => {

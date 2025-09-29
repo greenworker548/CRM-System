@@ -1,4 +1,4 @@
-import { TodoInfo, ActivTodosStatus } from "../../types/common"
+import { TodoInfo, ActivTodosStatus } from "../../types/todo"
 import { Button } from "antd"
 import "./TodoFilter.scss"
 

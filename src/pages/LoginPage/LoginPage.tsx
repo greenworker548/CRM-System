@@ -1,21 +1,11 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { AuthData } from "../../types/auth"
-import { Button, Form, Input } from "antd"
+import { Button, Form, Input, Typography } from "antd"
 import { useAuth } from "../../hooks/useAuth"
 import "./LoginPage.scss"
 import { signin } from "../../api/auth"
 
-// const VALIDATION_RULES = {
-//   TITLE_MIN_LENGTH: 2,
-//   TITLE_MAX_LENGTH: 64,
-// }
-
-// const ERROR_MESSAGES = {
-//   EMPTY_FIELD: "Поле не может быть пустым!",
-//   MIN_LENGTH: `Минимум ${VALIDATION_RULES.TITLE_MIN_LENGTH} символа!`,
-//   MAX_LENGTH: `Максимум ${VALIDATION_RULES.TITLE_MAX_LENGTH} символов!`,
-//   HTTP_ERROR: "HTTP error! Restart your browser.",
-// }
+const { Title, Text } = Typography
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -32,17 +22,16 @@ const LoginPage = () => {
   }
 
   return (
-    <div>
-      <h3>Log In</h3>
+    <div className="login-page">
+      <Title level={3} className="login-page_title">
+        Sign In
+      </Title>
       <Form
         name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600 }}
         initialValues={{ remember: false }}
         onFinish={handleSubmit}
-        autoComplete="off"
-        className="login-form"
+        className="login-page__form"
+        labelCol={{ span: 5 }}
       >
         <Form.Item<AuthData>
           label="Username"
@@ -60,16 +49,19 @@ const LoginPage = () => {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item label={null}>
+        <Form.Item
+          wrapperCol={{
+            offset: 0,
+          }}
+        >
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
         </Form.Item>
       </Form>
-
-      <Button type="primary" htmlType="button">
-        Registration
-      </Button>
+      <Text>
+        Not registered Yet? <Link to="/register">Create an account.</Link>
+      </Text>
     </div>
   )
 }

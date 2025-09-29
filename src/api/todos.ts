@@ -1,5 +1,10 @@
-import { Todo, TodoInfo, ActivTodosStatus, TodoRequest } from "../types/common"
-import { MetaResponse } from "../types/api"
+import {
+  MetaResponse,
+  Todo,
+  TodoInfo,
+  ActivTodosStatus,
+  TodoRequest,
+} from "../types/todo"
 import axios, { AxiosInstance } from "axios"
 
 const apiInstance: AxiosInstance = axios.create({

@@ -1,7 +1,8 @@
-import { Button, Form, Input } from "antd"
+import { Button, Form, Input, Typography } from "antd"
 import { signup } from "../../api/auth"
 import { UserRegistration } from "../../types/auth"
-// import "./RegisterPage.scss"
+import { Link } from "react-router-dom"
+import "./RegisterPage.scss"
 
 // const VALIDATION_RULES = {
 //   TITLE_MIN_LENGTH: 2,
@@ -15,6 +16,8 @@ import { UserRegistration } from "../../types/auth"
 //   HTTP_ERROR: "HTTP error! Restart your browser.",
 // }
 
+const { Title, Text } = Typography
+
 const handleSubmit = async (values: UserRegistration) => {
   try {
     await signup(values)
@@ -25,61 +28,75 @@ const handleSubmit = async (values: UserRegistration) => {
 
 const RegisterPage = () => {
   return (
-    <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
-      onFinish={handleSubmit}
-      autoComplete="off"
-      className="login-form"
-    >
-      <Form.Item<UserRegistration>
-        label="Login"
-        name="login"
-        rules={[{ required: true, message: "Please input your login!" }]}
+    <div className="register-page">
+      <Title level={3} className="register-page_title">
+        Sign Up
+      </Title>
+      <Form
+        name="basic"
+        labelCol={{ span: 6 }}
+        style={{ maxWidth: 600 }}
+        onFinish={handleSubmit}
+        autoComplete="off"
+        className="register-page_form"
       >
-        <Input />
-      </Form.Item>
+        <Form.Item<UserRegistration>
+          label="Login"
+          name="login"
+          rules={[{ required: true, message: "Please input your login!" }]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item<UserRegistration>
-        label="Username"
-        name="username"
-        rules={[{ required: true, message: "Please input your username!" }]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item<UserRegistration>
+          label="Username"
+          name="username"
+          rules={[{ required: true, message: "Please input your username!" }]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item<UserRegistration>
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: "Please input your password!" }]}
-      >
-        <Input.Password />
-      </Form.Item>
+        <Form.Item<UserRegistration>
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
+          <Input.Password />
+        </Form.Item>
 
-      <Form.Item<UserRegistration>
-        label="Email"
-        name="email"
-        rules={[{ required: true, message: "Please input your email!" }]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item<UserRegistration>
+          label="Email"
+          name="email"
+          rules={[{ required: true, message: "Please input your email!" }]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item<UserRegistration>
-        label="Phone number"
-        name="phoneNumber"
-        rules={[{ required: true, message: "Please input your phonenumber!" }]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item<UserRegistration>
+          label="Phone number"
+          name="phoneNumber"
+          rules={[
+            { required: true, message: "Please input your phonenumber!" },
+          ]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item label={null}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item
+          wrapperCol={{
+            offset: 0,
+          }}
+        >
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+
+      <Text>
+        Have an account? <Link to="/login">Log in.</Link>
+      </Text>
+    </div>
   )
 }
 
