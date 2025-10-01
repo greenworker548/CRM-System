@@ -14,7 +14,6 @@ export const useAuth = () => {
   }
 
   return {
-    user: auth.user,
     accessToken: auth.accessToken,
     isAuthenticated,
     login,

@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom"
 import { AuthData } from "../../types/auth"
-import { Button, Form, Input, Typography } from "antd"
+import { Button, Form, Input, Typography, message } from "antd"
 import { useAuth } from "../../hooks/useAuth"
 import "./LoginPage.scss"
 import { signin } from "../../api/auth"
@@ -11,18 +11,33 @@ const LoginPage = () => {
   const navigate = useNavigate()
   const { login } = useAuth()
 
+  const [messageApi, contextHolder] = message.useMessage()
+
+  const errorAlert = () => {
+    messageApi.open({
+      type: "error",
+      content: "Invalid username or password!",
+    })
+  }
+
   const handleSubmit = async (values: AuthData) => {
     try {
       const tokens = await signin(values)
+
+      localStorage.setItem("accessToken", tokens.accessToken)
+      localStorage.setItem("refreshToken", tokens.refreshToken)
+
       await login(tokens)
       navigate("/", { replace: true })
     } catch (error) {
-      alert("HTTP error! Restart your browser.")
+      // alert("HTTP error! Restart your browser.")
+      errorAlert()
     }
   }
 
   return (
     <div className="login-page">
+      {contextHolder}
       <Title level={3} className="login-page_title">
         Sign In
       </Title>
