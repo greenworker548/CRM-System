@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Form, Input, Button, Checkbox, message } from "antd"
+import { Form, Input, Button, Checkbox } from "antd"
 import { changeTodos, deleteTodos } from "../../api/todos"
 import "./TodoItem.scss"
 import {

@@ -49,7 +49,7 @@ const LoginPage = () => {
         labelCol={{ span: 5 }}
       >
         <Form.Item<AuthData>
-          label="Username"
+          label="Login"
           name="login"
           rules={[{ required: true, message: "Please input your login!" }]}
         >
