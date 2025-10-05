@@ -1,15 +1,17 @@
 import { useNavigate, Link } from "react-router-dom"
 import { AuthData } from "../../types/auth"
-import { Button, Form, Input, Typography, message } from "antd"
+import { Button, Form, Input, Typography, message, Spin } from "antd"
 import { useAuth } from "../../hooks/useAuth"
 import "./LoginPage.scss"
-import { signin } from "../../api/auth"
+import { useState } from "react"
 
 const { Title, Text } = Typography
 
 const LoginPage = () => {
   const navigate = useNavigate()
   const { login } = useAuth()
+  const [form] = Form.useForm()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const [messageApi, contextHolder] = message.useMessage()
 
@@ -21,62 +23,63 @@ const LoginPage = () => {
   }
 
   const handleSubmit = async (values: AuthData) => {
+    setLoading(true)
     try {
-      const tokens = await signin(values)
-
-      localStorage.setItem("accessToken", tokens.accessToken)
-      localStorage.setItem("refreshToken", tokens.refreshToken)
-
-      await login(tokens)
+      await login(values)
       navigate("/", { replace: true })
     } catch (error) {
-      // alert("HTTP error! Restart your browser.")
       errorAlert()
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <div className="login-page">
       {contextHolder}
-      <Title level={3} className="login-page_title">
-        Sign In
-      </Title>
-      <Form
-        name="basic"
-        initialValues={{ remember: false }}
-        onFinish={handleSubmit}
-        className="login-page__form"
-        labelCol={{ span: 5 }}
-      >
-        <Form.Item<AuthData>
-          label="Login"
-          name="login"
-          rules={[{ required: true, message: "Please input your login!" }]}
+      <Spin spinning={loading} tip="Signing in..." size="large">
+        <Title level={3} className="login-page_title">
+          Sign In
+        </Title>
+        <Form
+          form={form}
+          name="basic"
+          initialValues={{ remember: false }}
+          onFinish={handleSubmit}
+          className="login-page__form"
+          labelCol={{ span: 5 }}
+          disabled={loading}
         >
-          <Input />
-        </Form.Item>
+          <Form.Item<AuthData>
+            label="Login"
+            name="login"
+            rules={[{ required: true, message: "Please input your login!" }]}
+          >
+            <Input />
+          </Form.Item>
 
-        <Form.Item<AuthData>
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
-        >
-          <Input.Password />
-        </Form.Item>
+          <Form.Item<AuthData>
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: "Please input your password!" }]}
+          >
+            <Input.Password />
+          </Form.Item>
 
-        <Form.Item
-          wrapperCol={{
-            offset: 0,
-          }}
-        >
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-      <Text>
-        Not registered Yet? <Link to="/register">Create an account.</Link>
-      </Text>
+          <Form.Item
+            wrapperCol={{
+              offset: 0,
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+        <Text>
+          Not registered yet? <Link to="/register">Create an account.</Link>
+        </Text>
+      </Spin>
     </div>
   )
 }
