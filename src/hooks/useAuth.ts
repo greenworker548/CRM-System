@@ -1,45 +1,54 @@
 import { signin, refreshToken, logout } from "../api/auth"
-import { setTokens, outTokens } from "../store/slices/authSlice"
+import {
+  setTokens,
+  outTokens,
+  setAuthenticated,
+} from "../store/slices/authSlice"
 import { useDispatch, useSelector } from "react-redux"
-import { AuthData, AuthState, RefreshToken } from "../types/auth"
+import { AuthData } from "../types/auth"
 
 export const useAuth = () => {
   const dispatch = useDispatch()
   const auth = useSelector((state: any) => state.auth)
-  const isAuthenticated = !!auth.accessToken
 
   const login = async (values: AuthData) => {
     const tokens = await signin(values)
 
-    localStorage.setItem("accessToken", tokens.accessToken)
     localStorage.setItem("refreshToken", tokens.refreshToken)
 
     dispatch(setTokens(tokens))
+    dispatch(setAuthenticated(true))
   }
 
   const refresh = async () => {
-    const tokens = auth.refreshToken
-    const newTokens = await refreshToken({ refreshToken: tokens })
+    const refreshTokenValue = localStorage.getItem("refreshToken")
+    if (!refreshTokenValue) {
+      throw new Error("No refresh token")
+    }
 
-    localStorage.setItem("accessToken", newTokens.accessToken)
+    const newTokens = await refreshToken({ refreshToken: refreshTokenValue })
+
     localStorage.setItem("refreshToken", newTokens.refreshToken)
 
     dispatch(setTokens(newTokens))
+    dispatch(setAuthenticated(true))
+
+    return newTokens.accessToken
   }
 
   const exit = async () => {
-    await logout()
-
-    localStorage.removeItem("accessToken")
     localStorage.removeItem("refreshToken")
 
     dispatch(outTokens())
+    dispatch(setAuthenticated(false))
+
+    await logout()
   }
 
   return {
     accessToken: auth.accessToken,
     refreshToken: auth.refreshToken,
-    isAuthenticated,
+    isAuthenticated: auth.isAuthenticated,
     login,
     refresh,
     exit,
