@@ -40,6 +40,6 @@ export type Role = "ADMIN" | "USER" | "MODERATOR"
 
 export interface AuthState {
   isAuthenticated: boolean
-  accessToken: string | null
+  accessToken?: string | null
   refreshToken: string | null
 }

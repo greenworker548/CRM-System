@@ -3,13 +3,13 @@ import { Navigate } from "react-router-dom"
 import { useAuth } from "../../hooks/useAuth"
 import { apiAuthInstance } from "../../api/auth"
 import { Spin } from "antd"
+import { tokenManager } from "../../utils/tokenManager"
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, accessToken, refreshToken, refresh, exit } =
-    useAuth()
+  const { isAuthenticated, refreshToken, refresh, exit } = useAuth()
   const [loading, setLoading] = useState<boolean>(true)
 
-  const attempt = async () => {
+  const checkAuth = async () => {
     try {
       await refresh()
     } catch (error) {
@@ -21,7 +21,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (refreshToken && !isAuthenticated) {
-      attempt()
+      checkAuth()
     } else {
       setLoading(false)
     }
@@ -54,6 +54,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const requestInterceptor = apiAuthInstance.interceptors.request.use(
       (config) => {
+        const accessToken = tokenManager.getAccessToken()
         if (accessToken) {
           config.headers.Authorization = `Bearer ${accessToken}`
         }
@@ -65,7 +66,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     return () => {
       apiAuthInstance.interceptors.request.eject(requestInterceptor)
     }
-  }, [accessToken])
+  }, [])
 
   if (loading) {
     return <Spin fullscreen size="large" tip="Checking authentication..." />

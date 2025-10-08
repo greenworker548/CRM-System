@@ -3,7 +3,7 @@ import { AuthState } from "../../types/auth"
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  accessToken: null,
+  // accessToken: null,
   refreshToken: localStorage.getItem("refreshToken"),
 }
 
@@ -15,11 +15,9 @@ const authSlice = createSlice({
       state.isAuthenticated = action.payload
     },
     setTokens: (state, action) => {
-      state.accessToken = action.payload.accessToken
       state.refreshToken = action.payload.refreshToken
     },
     outTokens: (state) => {
-      state.accessToken = null
       state.refreshToken = null
     },
   },

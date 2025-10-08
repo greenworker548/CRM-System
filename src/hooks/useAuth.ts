@@ -7,6 +7,7 @@ import {
 import { useDispatch } from "react-redux"
 import { AuthData } from "../types/auth"
 import { useAppSelector } from "../store/store"
+import { tokenManager } from "../utils/tokenManager"
 
 export const useAuth = () => {
   const dispatch = useDispatch()
@@ -15,9 +16,10 @@ export const useAuth = () => {
   const login = async (values: AuthData) => {
     const tokens = await signin(values)
 
+    tokenManager.setAccessToken(tokens.accessToken)
     localStorage.setItem("refreshToken", tokens.refreshToken)
 
-    dispatch(setTokens(tokens))
+    dispatch(setTokens({ refreshToken: tokens.refreshToken }))
     dispatch(setAuthenticated(true))
   }
 
@@ -29,25 +31,27 @@ export const useAuth = () => {
 
     const newTokens = await refreshToken({ refreshToken: refreshTokenValue })
 
+    tokenManager.setAccessToken(newTokens.accessToken)
     localStorage.setItem("refreshToken", newTokens.refreshToken)
 
-    dispatch(setTokens(newTokens))
+    dispatch(setTokens({ refreshToken: newTokens.refreshToken }))
     dispatch(setAuthenticated(true))
 
     return newTokens.accessToken
   }
 
   const exit = async () => {
+    await logout()
+
+    tokenManager.clearAccessToken()
     localStorage.removeItem("refreshToken")
 
     dispatch(outTokens())
     dispatch(setAuthenticated(false))
-
-    await logout()
   }
 
   return {
-    accessToken: auth.accessToken,
+    accessToken: tokenManager.getAccessToken(),
     refreshToken: auth.refreshToken,
     isAuthenticated: auth.isAuthenticated,
     login,
