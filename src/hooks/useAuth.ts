@@ -4,12 +4,13 @@ import {
   outTokens,
   setAuthenticated,
 } from "../store/slices/authSlice"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { AuthData } from "../types/auth"
+import { useAppSelector } from "../store/store"
 
 export const useAuth = () => {
   const dispatch = useDispatch()
-  const auth = useSelector((state: any) => state.auth)
+  const auth = useAppSelector((state) => state.auth)
 
   const login = async (values: AuthData) => {
     const tokens = await signin(values)

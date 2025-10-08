@@ -5,8 +5,9 @@ import { apiAuthInstance } from "../../api/auth"
 import { Spin } from "antd"
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, accessToken, refreshToken, refresh, exit } = useAuth()
-  const [loading, setLoading] = useState(true)
+  const { isAuthenticated, accessToken, refreshToken, refresh, exit } =
+    useAuth()
+  const [loading, setLoading] = useState<boolean>(true)
 
   const attempt = async () => {
     try {
@@ -29,7 +30,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!isAuthenticated) return
 
-    const interceptor = apiAuthInstance.interceptors.response.use(
+    const responseInterceptor = apiAuthInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response?.status === 401 && isAuthenticated) {
@@ -46,7 +47,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     )
 
     return () => {
-      apiAuthInstance.interceptors.response.eject(interceptor)
+      apiAuthInstance.interceptors.response.eject(responseInterceptor)
     }
   }, [isAuthenticated, exit, refresh])
 
@@ -67,9 +68,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   }, [accessToken])
 
   if (loading) {
-    return (
-      <Spin fullscreen size="large" tip="Checking authentication..." />
-    )
+    return <Spin fullscreen size="large" tip="Checking authentication..." />
   }
 
   if (!isAuthenticated) {
