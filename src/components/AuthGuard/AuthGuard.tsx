@@ -1,30 +1,30 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../../hooks/useAuth"
 import { apiAuthInstance } from "../../api/auth"
+import { Spin } from "antd"
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, accessToken, refreshToken, refresh, exit } =
-    useAuth()
-
-  // const { refreshToken, refresh, exit } = useAuth()
-  // console.log(refreshToken)
+  const { isAuthenticated, accessToken, refreshToken, refresh, exit } = useAuth()
+  const [loading, setLoading] = useState(true)
 
   const attempt = async () => {
     try {
-      console.log("вызов рефреш")
       await refresh()
-      // navigate("/", { replace: true })
     } catch (error) {
       exit()
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    if (!refreshToken) return
-
-    attempt()
-  }, [])
+    if (refreshToken && !isAuthenticated) {
+      attempt()
+    } else {
+      setLoading(false)
+    }
+  }, [refreshToken, isAuthenticated])
 
   useEffect(() => {
     if (!isAuthenticated) return
@@ -35,9 +35,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         if (error.response?.status === 401 && isAuthenticated) {
           try {
             const newAccessToken = await refresh()
-
             error.config.headers.Authorization = `Bearer ${newAccessToken}`
-
             return apiAuthInstance.request(error.config)
           } catch (refreshError) {
             exit()
@@ -67,6 +65,12 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       apiAuthInstance.interceptors.request.eject(requestInterceptor)
     }
   }, [accessToken])
+
+  if (loading) {
+    return (
+      <Spin fullscreen size="large" tip="Checking authentication..." />
+    )
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
