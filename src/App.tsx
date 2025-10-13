@@ -1,18 +1,35 @@
+import LoginPage from "./pages/LoginPage/LoginPage"
+import RegisterPage from "./pages/RegisterPage/RegisterPage"
 import TodoListPage from "./pages/TodoListPage/TodoListPage"
 import ProfilePage from "./pages/ProfilePage/ProfilePage"
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes, Navigate } from "react-router-dom"
 import MainLayout from "./layouts/MainLayout/MainLayout"
+import AuthLayout from "./layouts/AuthLayout/AuthLayout"
+import AuthGuard from "./components/AuthGuard/AuthGuard"
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<TodoListPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-        </Route>
-      </Routes>
-    </>
+    <Routes>
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
+
+      <Route
+        path="/"
+        element={
+          <AuthGuard>
+            <MainLayout />
+          </AuthGuard>
+        }
+      >
+        <Route index element={<TodoListPage />} />
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
+
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 

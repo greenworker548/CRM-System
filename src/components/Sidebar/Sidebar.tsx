@@ -1,10 +1,12 @@
 import { Menu } from "antd"
 import { UserOutlined, CheckSquareOutlined } from "@ant-design/icons"
 import type { MenuProps } from "antd"
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import "./Sidebar.scss"
 
 const Sidebar = () => {
+  const location = useLocation()
+
   const menuItems: MenuProps["items"] = [
     {
       key: "/",
@@ -31,7 +33,7 @@ const Sidebar = () => {
       <Menu
         mode="inline"
         items={menuItems}
-        defaultSelectedKeys={['/']}
+        defaultSelectedKeys={[location.pathname]}
       />
     </div>
   )

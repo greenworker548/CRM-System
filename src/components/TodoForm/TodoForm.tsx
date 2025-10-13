@@ -42,13 +42,13 @@ export const TodoForm = ({ fetchTodos }: TodoFormProps) => {
         name="title"
         rules={[
           { required: true, message: ERROR_MESSAGES.EMPTY_FIELD },
-          { 
-            min: VALIDATION_RULES.TITLE_MIN_LENGTH, 
-            message: ERROR_MESSAGES.MIN_LENGTH 
+          {
+            min: VALIDATION_RULES.TITLE_MIN_LENGTH,
+            message: ERROR_MESSAGES.MIN_LENGTH,
           },
-          { 
-            max: VALIDATION_RULES.TITLE_MAX_LENGTH, 
-            message: ERROR_MESSAGES.MAX_LENGTH 
+          {
+            max: VALIDATION_RULES.TITLE_MAX_LENGTH,
+            message: ERROR_MESSAGES.MAX_LENGTH,
           },
         ]}
         className="todo-form__item"

@@ -1,8 +1,13 @@
 import { useState } from "react"
-import { Form, Input, Button, Checkbox, message } from "antd"
+import { Form, Input, Button, Checkbox } from "antd"
 import { changeTodos, deleteTodos } from "../../api/todos"
 import "./TodoItem.scss"
-import { FormOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons'
+import {
+  FormOutlined,
+  DeleteOutlined,
+  CheckOutlined,
+  StopOutlined,
+} from "@ant-design/icons"
 
 const VALIDATION_RULES = {
   TITLE_MIN_LENGTH: 2,
@@ -17,14 +22,14 @@ const ERROR_MESSAGES = {
 }
 
 interface TodoItemProps {
-  id: number,
-  checked: boolean,
-  title: string,
-  fetchTodos: () => Promise<void>,
+  id: number
+  checked: boolean
+  title: string
+  fetchTodos: () => Promise<void>
 }
 
 export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false)
   const [form] = Form.useForm()
   const formId = `edit-form-${id}`
 
@@ -61,22 +66,18 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
       </div>
 
       {isEditing ? (
-        <Form
-          form={form}
-          onFinish={handleSave}
-          id={formId}
-        >
+        <Form form={form} onFinish={handleSave} id={formId}>
           <Form.Item
             name="title"
             rules={[
               { required: true, message: ERROR_MESSAGES.EMPTY_FIELD },
-              { 
-                min: VALIDATION_RULES.TITLE_MIN_LENGTH, 
-                message: ERROR_MESSAGES.MIN_LENGTH 
+              {
+                min: VALIDATION_RULES.TITLE_MIN_LENGTH,
+                message: ERROR_MESSAGES.MIN_LENGTH,
               },
-              { 
-                max: VALIDATION_RULES.TITLE_MAX_LENGTH, 
-                message: ERROR_MESSAGES.MAX_LENGTH 
+              {
+                max: VALIDATION_RULES.TITLE_MAX_LENGTH,
+                message: ERROR_MESSAGES.MAX_LENGTH,
               },
             ]}
             className="todo-form__item"
@@ -93,21 +94,11 @@ export const TodoItem = ({ id, checked, title, fetchTodos }: TodoItemProps) => {
       <div className="todo-item__buttons-wrapper">
         {isEditing ? (
           <>
-            <Button
-              htmlType="submit"
-              form={formId}
-              icon={<CheckOutlined />}
-            />
-            <Button
-              onClick={handleCancel}
-              icon={<StopOutlined />}
-            />
+            <Button htmlType="submit" form={formId} icon={<CheckOutlined />} />
+            <Button onClick={handleCancel} icon={<StopOutlined />} />
           </>
         ) : (
-          <Button
-            onClick={handleStartEditing}
-            icon={<FormOutlined />}
-          />
+          <Button onClick={handleStartEditing} icon={<FormOutlined />} />
         )}
         <Button
           onClick={handleDeleteTodoItem}
