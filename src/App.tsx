@@ -6,6 +6,7 @@ import { Route, Routes, Navigate } from "react-router-dom"
 import MainLayout from "./layouts/MainLayout/MainLayout"
 import AuthLayout from "./layouts/AuthLayout/AuthLayout"
 import AuthGuard from "./components/AuthGuard/AuthGuard"
+import UsersPage from "./pages/UsersPage/UsersPage"
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       >
         <Route index element={<TodoListPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="users" element={<UsersPage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />
