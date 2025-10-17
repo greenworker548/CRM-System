@@ -3,23 +3,19 @@ import { UserOutlined, CheckSquareOutlined } from "@ant-design/icons"
 import type { MenuProps } from "antd"
 import { NavLink, useLocation } from "react-router-dom"
 import "./Sidebar.scss"
-import { getProfile } from "../../api/auth"
 import { useEffect, useState } from "react"
-import { Role } from "../../types/auth"
-import { setUserRoles } from "../../store/slices/authSlice"
-import { useDispatch } from "react-redux"
+import { useAuth } from "../../hooks/useAuth"
 
 const Sidebar = () => {
   const location = useLocation()
-  const dispatch = useDispatch()
+  const { profile } = useAuth()
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
   const getUserProfile = async () => {
     try {
-      const response = await getProfile()
+      const userProfile = await profile()
 
-      dispatch(setUserRoles(response.roles))
-      if (response.roles.length > 1) setIsAdmin(true)
+      if (userProfile.roles.length > 1) setIsAdmin(true)
     } catch (error) {
       alert("HTTP error! Restart your browser.")
     }

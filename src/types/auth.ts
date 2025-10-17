@@ -39,7 +39,7 @@ export interface Token {
 export type Role = "ADMIN" | "USER" | "MODERATOR" | "HUILA"
 
 export interface AuthState {
-  userRoles: [Role] | null
+  userProfile: Profile | null
   isAuthenticated: boolean
   accessToken?: string | null
   refreshToken: string | null

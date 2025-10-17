@@ -1,8 +1,9 @@
-import { signin, refreshToken, logout } from "../api/auth"
+import { signin, refreshToken, logout, getProfile } from "../api/auth"
 import {
   setTokens,
   outTokens,
   setAuthenticated,
+  setUserProfile,
 } from "../store/slices/authSlice"
 import { useDispatch } from "react-redux"
 import { AuthData } from "../types/auth"
@@ -40,6 +41,13 @@ export const useAuth = () => {
     return newTokens.accessToken
   }
 
+  const profile = async () => {
+    const userProfile = await getProfile()
+    dispatch(setUserProfile(userProfile))
+
+    return userProfile
+  }
+
   const exit = async () => {
     await logout()
 
@@ -54,6 +62,7 @@ export const useAuth = () => {
     accessToken: tokenManager.getAccessToken(),
     refreshToken: auth.refreshToken,
     isAuthenticated: auth.isAuthenticated,
+    profile,
     login,
     refresh,
     exit,
