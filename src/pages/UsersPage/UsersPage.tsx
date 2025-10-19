@@ -1,5 +1,15 @@
+import { useEffect } from "react"
+import { UsersTable } from "../../components/UsersTable/UsersTable"
+import "./UsersPage.scss"
+
 const UsersPage = () => {
-  return <div>UsersPage</div>
+  useEffect(() => {}, [])
+
+  return (
+    <div className="users-page">
+      <UsersTable />
+    </div>
+  )
 }
 
 export default UsersPage
