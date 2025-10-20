@@ -1,0 +1,59 @@
+import {
+  MetaResponse,
+  User,
+  UserFilters,
+  UserRequest,
+  UserRolesRequest,
+  Roles,
+} from "../types/users"
+import { apiInstance } from "./instance"
+
+export async function getUsers(): Promise<MetaResponse<User>> {
+  const response = await apiInstance.get("/admin/users")
+  console.log(response.data)
+  return response.data
+}
+
+export async function getUserOnId(id: number): Promise<User> {
+  const response = await apiInstance.get(`/admin/users/${id}`)
+  return response.data
+}
+
+export async function updatingUserRights(
+  id: number,
+  roles: Roles[]
+): Promise<User> {
+  const response = await apiInstance.put(`/admin/users/${id}/rights`, {
+    roles,
+  })
+  return response.data
+}
+
+export async function updatingUser(
+  id: number,
+  username?: string,
+  email?: string,
+  phoneNumber?: string
+): Promise<User> {
+  const response = await apiInstance.put(`/admin/users/${id}`, {
+    username,
+    email,
+    phoneNumber,
+  })
+  return response.data
+}
+
+export async function blockUser(id: number): Promise<User> {
+  const response = await apiInstance.post(`/admin/users/${id}/block`)
+  return response.data
+}
+
+export async function unblockUser(id: number): Promise<User> {
+  const response = await apiInstance.post(`/admin/users/${id}/unblock`)
+  return response.data
+}
+
+export async function deleteUser(id: number): Promise<void> {
+  const response = await apiInstance.delete(`/admin/users/${id}`)
+  return response.data
+}

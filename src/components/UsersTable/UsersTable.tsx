@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Table, Button, Tag, Space } from "antd"
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
 
-export const UsersTable = () => {
+export const UsersTable = ({ userData }: any) => {
   const [loading, setLoading] = useState(false)
 
   const handleEdit = (payload: any) => {
@@ -13,27 +13,27 @@ export const UsersTable = () => {
     console.log("delete")
   }
 
-  const data = [
-    {
-      id: 1,
-      name: "Иван Иванов",
-      email: "ivan@mail.ru",
-      createdAt: "2024-01-15",
-      status: "active",
-      role: "admin",
-      tel: "+375292932269",
-    },
-    {
-      id: 2,
-      name: "Петя Иванов",
-      email: "ivan@mail.ru",
-      createdAt: "2024-01-15",
-      status: "active",
-      role: "admin",
-      tel: "+375292932269",
-    },
-    // ... больше данных
-  ]
+  // const data = [
+  //   {
+  //     id: 1,
+  //     name: "Иван Иванов",
+  //     email: "ivan@mail.ru",
+  //     createdAt: "2024-01-15",
+  //     status: "active",
+  //     role: "admin",
+  //     tel: "+375292932269",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Петя Иванов",
+  //     email: "ivan@mail.ru",
+  //     createdAt: "2024-01-15",
+  //     status: "active",
+  //     role: "admin",
+  //     tel: "+375292932269",
+  //   },
+  //   // ... больше данных
+  // ]
 
   const columns = [
     {
@@ -116,7 +116,7 @@ export const UsersTable = () => {
     <Table
       rowKey="id"
       columns={columns}
-      dataSource={data}
+      dataSource={userData}
       pagination={pagination}
       loading={loading}
       scroll={{ x: 800 }}
