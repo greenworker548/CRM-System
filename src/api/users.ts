@@ -8,9 +8,10 @@ import {
 } from "../types/users"
 import { apiInstance } from "./instance"
 
-export async function getUsers(): Promise<MetaResponse<User>> {
-  const response = await apiInstance.get("/admin/users")
-  console.log(response.data)
+export async function getUsers(
+  params: UserFilters = {}
+): Promise<MetaResponse<User>> {
+  const response = await apiInstance.get("/admin/users", { params })
   return response.data
 }
 

@@ -1,8 +1,13 @@
 import { useState } from "react"
-import { Table, Button, Tag, Space } from "antd"
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
+import { Table, Button, Tag, Space, Dropdown, Menu } from "antd"
+import { EditOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons"
 
-export const UsersTable = ({ userData }: any) => {
+export const UsersTable = ({
+  usersData,
+  onSortChange,
+  onBlockedFilterChange,
+  currentBlockedFilter,
+}: any) => {
   const [loading, setLoading] = useState(false)
 
   const handleEdit = (payload: any) => {
@@ -13,76 +18,126 @@ export const UsersTable = ({ userData }: any) => {
     console.log("delete")
   }
 
-  // const data = [
-  //   {
-  //     id: 1,
-  //     name: "Иван Иванов",
-  //     email: "ivan@mail.ru",
-  //     createdAt: "2024-01-15",
-  //     status: "active",
-  //     role: "admin",
-  //     tel: "+375292932269",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Петя Иванов",
-  //     email: "ivan@mail.ru",
-  //     createdAt: "2024-01-15",
-  //     status: "active",
-  //     role: "admin",
-  //     tel: "+375292932269",
-  //   },
-  //   // ... больше данных
-  // ]
+  // Обработчик изменения таблицы (сортировка)
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    // Когда сортировка отключена (третий клик) - сбрасываем к дефолту
+    if (sorter.order === undefined) {
+      onSortChange("id", "asc")
+      return
+    }
 
-  const columns = [
+    // Когда сортировка активна - преобразуем формат и отправляем
+    if (sorter.field && onSortChange) {
+      const sortOrder = sorter.order === "ascend" ? "asc" : "desc"
+      onSortChange(sorter.field, sortOrder)
+    }
+  }
+
+  // Опции для фильтра по статусу
+  const statusFilterOptions = [
+    {
+      key: "all",
+      label: "All",
+      value: undefined,
+    },
+    {
+      key: "active",
+      label: "Active",
+      value: false,
+    },
+    {
+      key: "blocked",
+      label: "Blocked",
+      value: true,
+    },
+  ]
+
+  // Обработчик выбора фильтра
+  const handleStatusFilterSelect = ({ key }: any) => {
+    const selectedOption = statusFilterOptions.find(
+      (option) => option.key === key
+    )
+    if (selectedOption && onBlockedFilterChange) {
+      onBlockedFilterChange(selectedOption.value)
+    }
+  }
+
+  // Меню для dropdown фильтра
+  const statusFilterMenu = (
+    <Menu
+      onClick={handleStatusFilterSelect}
+      selectedKeys={[
+        statusFilterOptions.find((opt) => opt.value === currentBlockedFilter)
+          ?.key || "all",
+      ]}
+    >
+      {statusFilterOptions.map((option) => (
+        <Menu.Item key={option.key}>{option.label}</Menu.Item>
+      ))}
+    </Menu>
+  )
+
+  const columns: any = [
     {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      //   sorter: (a: any, b: any) => a.name.localeCompare(b.name),
     },
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
-      //   sorter: (a: any, b: any) => a.name.localeCompare(b.name),
+      dataIndex: "username",
+      key: "username",
+      sorter: true,
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      sorter: true,
     },
     {
       title: "Registration date",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      //   sorter: (a: any, b: any) => new Date(a.createdAt) - new Date(b.createdAt),
+      dataIndex: "date",
+      key: "date",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      //   render: (status: any) => (
-      //     <Tag color={status === "active" ? "green" : "red"}>
-      //       {status === "active" ? "Активен" : "Неактивен"}
-      //     </Tag>
-      //   ),
+      title: (
+        <Space>
+          <span>Status</span>
+          <Dropdown
+            overlay={statusFilterMenu}
+            trigger={["click"]}
+            placement="bottomRight"
+          >
+            <Button
+              type={currentBlockedFilter !== undefined ? "primary" : "default"}
+              size="small"
+              icon={<FilterOutlined />}
+            >
+              {currentBlockedFilter === undefined && "All"}
+              {currentBlockedFilter === false && "Active"}
+              {currentBlockedFilter === true && "Blocked"}
+            </Button>
+          </Dropdown>
+        </Space>
+      ),
+      dataIndex: "isBlocked",
+      key: "isBlocked",
+      render: (status: any) => (
+        <Tag color={status === false ? "green" : "red"}>
+          {status === false ? "Активен" : "Заблокирован"}
+        </Tag>
+      ),
     },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-      //   filters: [
-      //     { text: "Админ", value: "admin" },
-      //     { text: "Пользователь", value: "user" },
-      //   ],
-      //   onFilter: (value: any, record: any) => record.role === value,
-    },
+    // {
+    //   title: "Role",
+    //   dataIndex: "roles",
+    //   key: "roles",
+    // },
     {
       title: "Phone number",
-      dataIndex: "tel",
-      key: "tel",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
     },
     {
       title: "Actions",
@@ -106,8 +161,6 @@ export const UsersTable = ({ userData }: any) => {
   ]
 
   const pagination = {
-    pageSize: 10,
-    showSizeChanger: true,
     showTotal: (total: any, range: any) =>
       `${range[0]}-${range[1]} из ${total} записей`,
   }
@@ -116,11 +169,12 @@ export const UsersTable = ({ userData }: any) => {
     <Table
       rowKey="id"
       columns={columns}
-      dataSource={userData}
+      dataSource={usersData}
       pagination={pagination}
       loading={loading}
       scroll={{ x: 800 }}
       size="middle"
+      onChange={handleTableChange}
     />
   )
 }
