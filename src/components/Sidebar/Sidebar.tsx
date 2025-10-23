@@ -1,5 +1,9 @@
 import { Menu } from "antd"
-import { UserOutlined, CheckSquareOutlined } from "@ant-design/icons"
+import {
+  UserOutlined,
+  CheckSquareOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons"
 import type { MenuProps } from "antd"
 import { NavLink, useLocation } from "react-router-dom"
 import "./Sidebar.scss"
@@ -49,7 +53,7 @@ const Sidebar = () => {
   const adminMenuItems: MenuProps["items"] = [
     {
       key: "/users",
-      icon: <UserOutlined />,
+      icon: <UserSwitchOutlined />,
       label: (
         <NavLink to="/users" className="sidebar__link">
           Users

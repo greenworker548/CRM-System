@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { UsersTable } from "../../components/UsersTable/UsersTable"
 import "./UsersPage.scss"
-import { getUsers } from "../../api/users"
+import { getUsers, deleteUser } from "../../api/users"
 import { UserFilters } from "../../types/users"
 
 const UsersPage = () => {
@@ -40,10 +40,19 @@ const UsersPage = () => {
   const handleBlockedFilterChange = (isBlocked: boolean | undefined) => {
     const newFilters = {
       ...filters,
-      isBlocked, // undefined - все, true - заблокированные, false - активные
+      isBlocked,
     }
     setFilters(newFilters)
     fetchUsers(newFilters)
+  }
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      await deleteUser(userId)
+      await fetchUsers(filters)
+    } catch (error) {
+      alert("HTTP error! Restart your browser.")
+    }
   }
 
   useEffect(() => {
@@ -54,9 +63,10 @@ const UsersPage = () => {
     <div className="users-page">
       <UsersTable
         usersData={users}
+        currentBlockedFilter={filters.isBlocked}
         onSortChange={handleSortChange}
         onBlockedFilterChange={handleBlockedFilterChange}
-        currentBlockedFilter={filters.isBlocked}
+        onDeleteUser={handleDeleteUser}
       />
     </div>
   )

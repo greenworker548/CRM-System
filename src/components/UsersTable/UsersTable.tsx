@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Table, Button, Tag, Space, Dropdown, Menu } from "antd"
+import { Table, Button, Tag, Space, Dropdown, Menu, Modal } from "antd"
 import { EditOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons"
 
 export const UsersTable = ({
@@ -7,33 +7,40 @@ export const UsersTable = ({
   onSortChange,
   onBlockedFilterChange,
   currentBlockedFilter,
+  onDeleteUser,
 }: any) => {
   const [loading, setLoading] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<any>(null)
 
   const handleEdit = (payload: any) => {
     console.log("edit")
   }
 
-  const handleDelete = (payload: any) => {
-    console.log("delete")
+  const handleDelete = (user: any) => {
+    setUserToDelete(user)
   }
 
-  // Обработчик изменения таблицы (сортировка)
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    // Когда сортировка отключена (третий клик) - сбрасываем к дефолту
     if (sorter.order === undefined) {
       onSortChange("id", "asc")
       return
     }
 
-    // Когда сортировка активна - преобразуем формат и отправляем
     if (sorter.field && onSortChange) {
       const sortOrder = sorter.order === "ascend" ? "asc" : "desc"
       onSortChange(sorter.field, sortOrder)
     }
   }
 
-  // Опции для фильтра по статусу
+  const handleStatusFilterSelect = ({ key }: any) => {
+    const selectedOption = statusFilterOptions.find(
+      (option) => option.key === key
+    )
+    if (selectedOption && onBlockedFilterChange) {
+      onBlockedFilterChange(selectedOption.value)
+    }
+  }
+
   const statusFilterOptions = [
     {
       key: "all",
@@ -52,28 +59,11 @@ export const UsersTable = ({
     },
   ]
 
-  // Обработчик выбора фильтра
-  const handleStatusFilterSelect = ({ key }: any) => {
-    const selectedOption = statusFilterOptions.find(
-      (option) => option.key === key
-    )
-    if (selectedOption && onBlockedFilterChange) {
-      onBlockedFilterChange(selectedOption.value)
-    }
-  }
-
-  // Меню для dropdown фильтра
   const statusFilterMenu = (
-    <Menu
-      onClick={handleStatusFilterSelect}
-      selectedKeys={[
-        statusFilterOptions.find((opt) => opt.value === currentBlockedFilter)
-          ?.key || "all",
-      ]}
-    >
-      {statusFilterOptions.map((option) => (
-        <Menu.Item key={option.key}>{option.label}</Menu.Item>
-      ))}
+    <Menu onClick={handleStatusFilterSelect}>
+      <Menu.Item key="all">All</Menu.Item>
+      <Menu.Item key="active">Active</Menu.Item>
+      <Menu.Item key="blocked">Blocked</Menu.Item>
     </Menu>
   )
 
@@ -99,16 +89,28 @@ export const UsersTable = ({
       title: "Registration date",
       dataIndex: "date",
       key: "date",
+      render: (dateString: string) => {
+        if (!dateString) return "—"
+
+        try {
+          const date = new Date(dateString)
+          return date.toLocaleDateString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        } catch (error) {
+          return "—"
+        }
+      },
     },
     {
       title: (
-        <Space>
+        <>
           <span>Status</span>
-          <Dropdown
-            overlay={statusFilterMenu}
-            trigger={["click"]}
-            placement="bottomRight"
-          >
+          <Dropdown overlay={statusFilterMenu} trigger={["click"]}>
             <Button
               type={currentBlockedFilter !== undefined ? "primary" : "default"}
               size="small"
@@ -119,25 +121,26 @@ export const UsersTable = ({
               {currentBlockedFilter === true && "Blocked"}
             </Button>
           </Dropdown>
-        </Space>
+        </>
       ),
       dataIndex: "isBlocked",
       key: "isBlocked",
       render: (status: any) => (
         <Tag color={status === false ? "green" : "red"}>
-          {status === false ? "Активен" : "Заблокирован"}
+          {status === false ? "Active" : "Blocked"}
         </Tag>
       ),
     },
-    // {
-    //   title: "Role",
-    //   dataIndex: "roles",
-    //   key: "roles",
-    // },
     {
       title: "Phone number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
+      render: (phoneNumber: any) => {
+        if (!phoneNumber || phoneNumber.trim() === "") {
+          return "—"
+        }
+        return phoneNumber
+      },
     },
     {
       title: "Actions",
@@ -153,7 +156,7 @@ export const UsersTable = ({
             icon={<DeleteOutlined />}
             size="small"
             danger
-            onClick={() => handleDelete(record.id)}
+            onClick={() => handleDelete(record)}
           />
         </Space>
       ),
@@ -166,15 +169,37 @@ export const UsersTable = ({
   }
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={usersData}
-      pagination={pagination}
-      loading={loading}
-      scroll={{ x: 800 }}
-      size="middle"
-      onChange={handleTableChange}
-    />
+    <>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={usersData}
+        pagination={pagination}
+        loading={loading}
+        scroll={{ x: 800 }}
+        size="middle"
+        onChange={handleTableChange}
+      />
+
+      <Modal
+        title="Удалить пользователя?"
+        open={!!userToDelete}
+        onOk={() => {
+          onDeleteUser(userToDelete.id)
+          setUserToDelete(null)
+        }}
+        onCancel={() => setUserToDelete(null)}
+        okText="Удалить"
+        cancelText="Отмена"
+        okType="danger"
+      >
+        {userToDelete && (
+          <p>
+            Вы уверены, что хотите удалить пользователя{" "}
+            <strong>{userToDelete.username}</strong> ({userToDelete.email})?
+          </p>
+        )}
+      </Modal>
+    </>
   )
 }
