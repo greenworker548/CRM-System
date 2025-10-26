@@ -56,12 +56,14 @@ export const useAuth = () => {
 
     dispatch(outTokens())
     dispatch(setAuthenticated(false))
+    dispatch(setUserProfile(null))
   }
 
   return {
     accessToken: tokenManager.getAccessToken(),
     refreshToken: auth.refreshToken,
     isAuthenticated: auth.isAuthenticated,
+    userProfile: auth.userProfile,
     profile,
     login,
     refresh,

@@ -1,6 +1,16 @@
 import { useState } from "react"
-import { Table, Button, Tag, Space, Dropdown, Menu, Modal } from "antd"
-import { EditOutlined, DeleteOutlined, FilterOutlined } from "@ant-design/icons"
+import { Table, Button, Tag, Space, Dropdown, Menu, Modal, Select } from "antd"
+import {
+  EditOutlined,
+  DeleteOutlined,
+  FilterOutlined,
+  LockOutlined,
+  UnlockOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons"
+import { Roles } from "../../types/users"
+
+const { Option } = Select
 
 export const UsersTable = ({
   usersData,
@@ -8,9 +18,16 @@ export const UsersTable = ({
   onBlockedFilterChange,
   currentBlockedFilter,
   onDeleteUser,
+  onBlockUser,
+  onUnblockUser,
+  onUpdateUserRoles,
 }: any) => {
   const [loading, setLoading] = useState(false)
   const [userToDelete, setUserToDelete] = useState<any>(null)
+  const [userToBlock, setUserToBlock] = useState<any>(null)
+
+  const [userToEditRoles, setUserToEditRoles] = useState<any>(null)
+  const [selectedRoles, setSelectedRoles] = useState<Roles[]>([])
 
   const handleEdit = (payload: any) => {
     console.log("edit")
@@ -39,6 +56,15 @@ export const UsersTable = ({
     if (selectedOption && onBlockedFilterChange) {
       onBlockedFilterChange(selectedOption.value)
     }
+  }
+
+  const handleBlockUser = (user: any) => {
+    setUserToBlock(user)
+  }
+
+  const handleEditRoles = (user: any) => {
+    setUserToEditRoles(user)
+    setSelectedRoles(user.roles || [])
   }
 
   const statusFilterOptions = [
@@ -132,6 +158,29 @@ export const UsersTable = ({
       ),
     },
     {
+      title: "Roles",
+      dataIndex: "roles",
+      key: "roles",
+      render: (roles: Roles[], record: any) => (
+        <Space wrap>
+          {roles.map((role: Roles) => (
+            <Tag
+              color={
+                role === Roles.ADMIN
+                  ? "red"
+                  : role === Roles.MODERATOR
+                  ? "blue"
+                  : "green"
+              }
+              key={role}
+            >
+              {role}
+            </Tag>
+          ))}
+        </Space>
+      ),
+    },
+    {
       title: "Phone number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
@@ -151,6 +200,18 @@ export const UsersTable = ({
             icon={<EditOutlined />}
             size="small"
             onClick={() => handleEdit(record)}
+          />
+          <Button
+            icon={<UserSwitchOutlined />}
+            size="small"
+            onClick={() => handleEditRoles(record)}
+          />
+          <Button
+            icon={record.isBlocked ? <UnlockOutlined /> : <LockOutlined />}
+            size="small"
+            type={record.isBlocked ? "primary" : "default"}
+            danger={!record.isBlocked}
+            onClick={() => handleBlockUser(record)}
           />
           <Button
             icon={<DeleteOutlined />}
@@ -198,6 +259,68 @@ export const UsersTable = ({
             Вы уверены, что хотите удалить пользователя{" "}
             <strong>{userToDelete.username}</strong> ({userToDelete.email})?
           </p>
+        )}
+      </Modal>
+
+      <Modal
+        title={
+          userToBlock?.isBlocked
+            ? "Разблокировать пользователя?"
+            : "Заблокировать пользователя?"
+        }
+        open={!!userToBlock}
+        onOk={() => {
+          if (userToBlock.isBlocked) {
+            onUnblockUser(userToBlock.id)
+          } else {
+            onBlockUser(userToBlock.id)
+          }
+          setUserToBlock(null)
+        }}
+        onCancel={() => setUserToBlock(null)}
+        okText={userToBlock?.isBlocked ? "Разблокировать" : "Заблокировать"}
+        cancelText="Отмена"
+        okType={userToBlock?.isBlocked ? "default" : "danger"}
+      >
+        {userToBlock && (
+          <p>
+            Вы уверены, что хотите{" "}
+            {userToBlock.isBlocked ? "разблокировать" : "заблокировать"}{" "}
+            пользователя <strong>{userToBlock.username}</strong> (
+            {userToBlock.email})?
+          </p>
+        )}
+      </Modal>
+
+      <Modal
+        title="Изменить роли пользователя?"
+        open={!!userToEditRoles}
+        onOk={() => {
+          onUpdateUserRoles(userToEditRoles.id, selectedRoles)
+          setUserToEditRoles(null)
+        }}
+        onCancel={() => setUserToEditRoles(null)}
+        okText="Сохранить"
+        cancelText="Отмена"
+      >
+        {userToEditRoles && (
+          <div>
+            <p>
+              Выберите роли для пользователя{" "}
+              <strong>{userToEditRoles.username}</strong>:
+            </p>
+            <Select
+              mode="multiple"
+              style={{ width: "100%" }}
+              placeholder="Выберите роли"
+              value={selectedRoles}
+              onChange={setSelectedRoles}
+            >
+              <Option value={Roles.USER}>USER</Option>
+              <Option value={Roles.MODERATOR}>MODERATOR</Option>
+              <Option value={Roles.ADMIN}>ADMIN</Option>
+            </Select>
+          </div>
         )}
       </Modal>
     </>

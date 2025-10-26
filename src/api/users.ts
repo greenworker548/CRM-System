@@ -24,7 +24,7 @@ export async function updatingUserRights(
   id: number,
   roles: Roles[]
 ): Promise<User> {
-  const response = await apiInstance.put(`/admin/users/${id}/rights`, {
+  const response = await apiInstance.post(`/admin/users/${id}/rights`, {
     roles,
   })
   return response.data
