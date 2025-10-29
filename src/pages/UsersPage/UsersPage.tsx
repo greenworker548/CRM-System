@@ -10,17 +10,20 @@ import {
 } from "../../api/users"
 import { Roles, UserFilters } from "../../types/users"
 import { useAuth } from "../../hooks/useAuth"
+import UsersPagination from "../../components/UsersPagination/UsersPagination"
 
 const UsersPage = () => {
   const [users, setUsers] = useState<any>([])
-  const { userProfile } = useAuth()
+  const [totalUsers, setTotalUsers] = useState<number>(0)
   const [filters, setFilters] = useState<UserFilters>({
     sortBy: "id",
     sortOrder: "asc",
     isBlocked: undefined,
-    limit: 100,
+    limit: 10,
     page: 0,
   })
+
+  const { userProfile } = useAuth()
 
   const userRole = userProfile ? userProfile.roles : null
 
@@ -31,6 +34,7 @@ const UsersPage = () => {
         ...params,
       })
       setUsers(response.data)
+      setTotalUsers(response.meta.totalAmount) // Используем totalAmount из meta
     } catch (error) {
       alert("HTTP error! Restart your browser.")
     }
@@ -95,6 +99,17 @@ const UsersPage = () => {
     }
   }
 
+  // Обработчик изменения пагинации
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    const newFilters = {
+      ...filters,
+      page: page - 1, // Antd начинается с 1, API с 0
+      limit: pageSize,
+    }
+    setFilters(newFilters)
+    fetchUsers(newFilters)
+  }
+
   useEffect(() => {
     fetchUsers()
   }, [])
@@ -110,6 +125,12 @@ const UsersPage = () => {
         onBlockUser={handleBlockUser}
         onUnblockUser={handleUnblockUser}
         onUpdateUserRoles={handleUpdateUserRoles}
+      />
+      <UsersPagination 
+        current={(filters.page || 0) + 1}
+        pageSize={filters.limit || 10}
+        total={totalUsers}
+        onChange={handlePaginationChange}
       />
     </div>
   )

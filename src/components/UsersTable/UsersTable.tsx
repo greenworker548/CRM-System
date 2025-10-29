@@ -9,6 +9,7 @@ import {
   UserSwitchOutlined,
 } from "@ant-design/icons"
 import { Roles } from "../../types/users"
+import { useNavigate } from "react-router-dom"
 
 const { Option } = Select
 
@@ -25,19 +26,20 @@ export const UsersTable = ({
   const [loading, setLoading] = useState(false)
   const [userToDelete, setUserToDelete] = useState<any>(null)
   const [userToBlock, setUserToBlock] = useState<any>(null)
-
   const [userToEditRoles, setUserToEditRoles] = useState<any>(null)
   const [selectedRoles, setSelectedRoles] = useState<Roles[]>([])
 
-  const handleEdit = (payload: any) => {
-    console.log("edit")
+  const navigate = useNavigate()
+
+  const handleEdit = (user: any) => {
+    navigate(`/users/${user.id}/edit`)
   }
 
   const handleDelete = (user: any) => {
     setUserToDelete(user)
   }
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleSortChange = (pagination: any, filters: any, sorter: any) => {
     if (sorter.order === undefined) {
       onSortChange("id", "asc")
       return
@@ -224,10 +226,10 @@ export const UsersTable = ({
     },
   ]
 
-  const pagination = {
-    showTotal: (total: any, range: any) =>
-      `${range[0]}-${range[1]} из ${total} записей`,
-  }
+  // const pagination = {
+  //   showTotal: (total: any, range: any) =>
+  //     `${range[0]}-${range[1]} из ${total} записей`,
+  // }
 
   return (
     <>
@@ -235,13 +237,14 @@ export const UsersTable = ({
         rowKey="id"
         columns={columns}
         dataSource={usersData}
-        pagination={pagination}
+        pagination={false}
         loading={loading}
         scroll={{ x: 800 }}
         size="middle"
-        onChange={handleTableChange}
+        onChange={handleSortChange}
       />
 
+      {/* модалка подтверждения удаления юзера */}
       <Modal
         title="Удалить пользователя?"
         open={!!userToDelete}
@@ -262,6 +265,7 @@ export const UsersTable = ({
         )}
       </Modal>
 
+      {/* модалка блокировки/разблокировки юзера */}
       <Modal
         title={
           userToBlock?.isBlocked
@@ -292,6 +296,7 @@ export const UsersTable = ({
         )}
       </Modal>
 
+      {/* модалка изменения роли юзера */}
       <Modal
         title="Изменить роли пользователя?"
         open={!!userToEditRoles}
