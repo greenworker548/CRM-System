@@ -4,11 +4,10 @@ import {
   CheckSquareOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons"
-import type { MenuProps } from "antd"
 import { NavLink, useLocation } from "react-router-dom"
-import "./Sidebar.scss"
 import { useEffect, useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
+import "./Sidebar.scss"
 
 const Sidebar = () => {
   const location = useLocation()
@@ -29,7 +28,7 @@ const Sidebar = () => {
     getUserProfile()
   }, [])
 
-  const menuItems: MenuProps["items"] = [
+  const menuItems = [
     {
       key: "/",
       icon: <CheckSquareOutlined />,
@@ -50,7 +49,7 @@ const Sidebar = () => {
     },
   ]
 
-  const adminMenuItems: MenuProps["items"] = [
+  const adminMenuItems = [
     {
       key: "/users",
       icon: <UserSwitchOutlined />,

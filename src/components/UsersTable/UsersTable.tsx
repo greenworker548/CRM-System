@@ -1,5 +1,15 @@
 import { useState } from "react"
-import { Table, Button, Tag, Space, Dropdown, Menu, Modal, Select } from "antd"
+import {
+  Table,
+  Button,
+  Tag,
+  Space,
+  Dropdown,
+  Menu,
+  Modal,
+  Select,
+  TableProps,
+} from "antd"
 import {
   EditOutlined,
   DeleteOutlined,
@@ -8,8 +18,20 @@ import {
   UnlockOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons"
-import { Roles } from "../../types/users"
 import { useNavigate } from "react-router-dom"
+import { User, Roles } from "../../types/users"
+import "./UsersTable.scss"
+
+interface UsersTableProps {
+  usersData: User[]
+  onSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void
+  onBlockedFilterChange: (isBlocked: boolean | undefined) => void
+  currentBlockedFilter: boolean | undefined
+  onDeleteUser: (userId: number) => void
+  onBlockUser: (userId: number) => void
+  onUnblockUser: (userId: number) => void
+  onUpdateUserRoles: (userId: number, newRoles: Roles[]) => void
+}
 
 const { Option } = Select
 
@@ -22,49 +44,56 @@ export const UsersTable = ({
   onBlockUser,
   onUnblockUser,
   onUpdateUserRoles,
-}: any) => {
-  const [loading, setLoading] = useState(false)
-  const [userToDelete, setUserToDelete] = useState<any>(null)
-  const [userToBlock, setUserToBlock] = useState<any>(null)
-  const [userToEditRoles, setUserToEditRoles] = useState<any>(null)
+}: UsersTableProps) => {
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
+  const [userToBlock, setUserToBlock] = useState<User | null>(null)
+  const [userToEditRoles, setUserToEditRoles] = useState<User | null>(null)
   const [selectedRoles, setSelectedRoles] = useState<Roles[]>([])
 
   const navigate = useNavigate()
 
-  const handleEdit = (user: any) => {
+  const handleEdit = (user: User) => {
     navigate(`/users/${user.id}/edit`)
   }
 
-  const handleDelete = (user: any) => {
+  const handleDelete = (user: User) => {
     setUserToDelete(user)
   }
 
-  const handleSortChange = (pagination: any, filters: any, sorter: any) => {
-    if (sorter.order === undefined) {
+  const handleSortChange: TableProps<User>["onChange"] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
+    const currentSorter = Array.isArray(sorter) ? sorter[0] : sorter
+
+    if (!currentSorter?.order) {
       onSortChange("id", "asc")
       return
     }
 
-    if (sorter.field && onSortChange) {
-      const sortOrder = sorter.order === "ascend" ? "asc" : "desc"
-      onSortChange(sorter.field, sortOrder)
+    if (currentSorter.field && typeof currentSorter.field === "string") {
+      onSortChange(
+        currentSorter.field,
+        currentSorter.order === "ascend" ? "asc" : "desc"
+      )
     }
   }
 
-  const handleStatusFilterSelect = ({ key }: any) => {
+  const handleStatusFilterSelect = (info: { key: string }) => {
     const selectedOption = statusFilterOptions.find(
-      (option) => option.key === key
+      (option) => option.key === info.key
     )
     if (selectedOption && onBlockedFilterChange) {
       onBlockedFilterChange(selectedOption.value)
     }
   }
 
-  const handleBlockUser = (user: any) => {
+  const handleBlockUser = (user: User) => {
     setUserToBlock(user)
   }
 
-  const handleEditRoles = (user: any) => {
+  const handleEditRoles = (user: User) => {
     setUserToEditRoles(user)
     setSelectedRoles(user.roles || [])
   }
@@ -95,7 +124,7 @@ export const UsersTable = ({
     </Menu>
   )
 
-  const columns: any = [
+  const columns = [
     {
       title: "ID",
       dataIndex: "id",
@@ -137,7 +166,9 @@ export const UsersTable = ({
     {
       title: (
         <>
-          <span>Status</span>
+          <div>
+            <span>Status</span>
+          </div>
           <Dropdown overlay={statusFilterMenu} trigger={["click"]}>
             <Button
               type={currentBlockedFilter !== undefined ? "primary" : "default"}
@@ -153,7 +184,7 @@ export const UsersTable = ({
       ),
       dataIndex: "isBlocked",
       key: "isBlocked",
-      render: (status: any) => (
+      render: (status: boolean) => (
         <Tag color={status === false ? "green" : "red"}>
           {status === false ? "Active" : "Blocked"}
         </Tag>
@@ -163,9 +194,9 @@ export const UsersTable = ({
       title: "Roles",
       dataIndex: "roles",
       key: "roles",
-      render: (roles: Roles[], record: any) => (
-        <Space wrap>
-          {roles.map((role: Roles) => (
+      render: (roles: Roles[]) => {
+        return roles.map((role: Roles) => (
+          <div className="roles">
             <Tag
               color={
                 role === Roles.ADMIN
@@ -178,15 +209,15 @@ export const UsersTable = ({
             >
               {role}
             </Tag>
-          ))}
-        </Space>
-      ),
+          </div>
+        ))
+      },
     },
     {
       title: "Phone number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
-      render: (phoneNumber: any) => {
+      render: (phoneNumber: string) => {
         if (!phoneNumber || phoneNumber.trim() === "") {
           return "—"
         }
@@ -196,8 +227,8 @@ export const UsersTable = ({
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: any) => (
-        <Space>
+      render: (_: unknown, record: User) => (
+        <div className="actions">
           <Button
             icon={<EditOutlined />}
             size="small"
@@ -221,15 +252,10 @@ export const UsersTable = ({
             danger
             onClick={() => handleDelete(record)}
           />
-        </Space>
+        </div>
       ),
     },
   ]
-
-  // const pagination = {
-  //   showTotal: (total: any, range: any) =>
-  //     `${range[0]}-${range[1]} из ${total} записей`,
-  // }
 
   return (
     <>
@@ -238,86 +264,81 @@ export const UsersTable = ({
         columns={columns}
         dataSource={usersData}
         pagination={false}
-        loading={loading}
-        scroll={{ x: 800 }}
         size="middle"
         onChange={handleSortChange}
       />
 
-      {/* модалка подтверждения удаления юзера */}
       <Modal
-        title="Удалить пользователя?"
+        title="Delete user?"
         open={!!userToDelete}
         onOk={() => {
-          onDeleteUser(userToDelete.id)
-          setUserToDelete(null)
+          if (userToDelete) {
+            onDeleteUser(userToDelete.id)
+            setUserToDelete(null)
+          }
         }}
         onCancel={() => setUserToDelete(null)}
-        okText="Удалить"
-        cancelText="Отмена"
+        okText="Delete"
+        cancelText="Cancel"
         okType="danger"
       >
         {userToDelete && (
           <p>
-            Вы уверены, что хотите удалить пользователя{" "}
+            Are you sure you want to delete the user{" "}
             <strong>{userToDelete.username}</strong> ({userToDelete.email})?
           </p>
         )}
       </Modal>
 
-      {/* модалка блокировки/разблокировки юзера */}
       <Modal
-        title={
-          userToBlock?.isBlocked
-            ? "Разблокировать пользователя?"
-            : "Заблокировать пользователя?"
-        }
+        title={userToBlock?.isBlocked ? "Unblock the user?" : "Block the user?"}
         open={!!userToBlock}
         onOk={() => {
-          if (userToBlock.isBlocked) {
-            onUnblockUser(userToBlock.id)
-          } else {
-            onBlockUser(userToBlock.id)
+          if (userToBlock) {
+            if (userToBlock.isBlocked) {
+              onUnblockUser(userToBlock.id)
+            } else {
+              onBlockUser(userToBlock.id)
+            }
+            setUserToBlock(null)
           }
-          setUserToBlock(null)
         }}
         onCancel={() => setUserToBlock(null)}
-        okText={userToBlock?.isBlocked ? "Разблокировать" : "Заблокировать"}
-        cancelText="Отмена"
+        okText={userToBlock?.isBlocked ? "Unblock" : "Block"}
+        cancelText="Cancel"
         okType={userToBlock?.isBlocked ? "default" : "danger"}
       >
         {userToBlock && (
           <p>
-            Вы уверены, что хотите{" "}
-            {userToBlock.isBlocked ? "разблокировать" : "заблокировать"}{" "}
-            пользователя <strong>{userToBlock.username}</strong> (
-            {userToBlock.email})?
+            Are you sure you want to{" "}
+            {userToBlock.isBlocked ? "unblock" : "block"} the user{" "}
+            <strong>{userToBlock.username}</strong> ({userToBlock.email})?
           </p>
         )}
       </Modal>
 
-      {/* модалка изменения роли юзера */}
       <Modal
-        title="Изменить роли пользователя?"
+        title="Change user roles?"
         open={!!userToEditRoles}
         onOk={() => {
-          onUpdateUserRoles(userToEditRoles.id, selectedRoles)
+          if (userToEditRoles)
+            onUpdateUserRoles(userToEditRoles.id, selectedRoles)
           setUserToEditRoles(null)
         }}
         onCancel={() => setUserToEditRoles(null)}
-        okText="Сохранить"
-        cancelText="Отмена"
+        okText="Save"
+        cancelText="Cancel"
       >
         {userToEditRoles && (
           <div>
             <p>
-              Выберите роли для пользователя{" "}
+              Select the roles for the user{" "}
               <strong>{userToEditRoles.username}</strong>:
             </p>
             <Select
               mode="multiple"
               style={{ width: "100%" }}
-              placeholder="Выберите роли"
+              placeholder="Select Roles"
               value={selectedRoles}
               onChange={setSelectedRoles}
             >

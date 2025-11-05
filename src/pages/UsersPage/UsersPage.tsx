@@ -11,6 +11,7 @@ import {
 import { Roles, UserFilters } from "../../types/users"
 import { useAuth } from "../../hooks/useAuth"
 import UsersPagination from "../../components/UsersPagination/UsersPagination"
+import UsersSearch from "../../components/UsersSearch/UsersSearch"
 
 const UsersPage = () => {
   const [users, setUsers] = useState<any>([])
@@ -34,7 +35,7 @@ const UsersPage = () => {
         ...params,
       })
       setUsers(response.data)
-      setTotalUsers(response.meta.totalAmount) // Используем totalAmount из meta
+      setTotalUsers(response.meta.totalAmount)
     } catch (error) {
       alert("HTTP error! Restart your browser.")
     }
@@ -45,6 +46,7 @@ const UsersPage = () => {
       ...filters,
       sortBy,
       sortOrder,
+      page: 0,
     }
 
     setFilters(newSortParams)
@@ -55,6 +57,7 @@ const UsersPage = () => {
     const newFilters = {
       ...filters,
       isBlocked,
+      page: 0,
     }
     setFilters(newFilters)
     fetchUsers(newFilters)
@@ -110,12 +113,27 @@ const UsersPage = () => {
     fetchUsers(newFilters)
   }
 
+  // Обработчик поиска
+  const handleSearchChange = (searchValue: string) => {
+    const newFilters = {
+      ...filters,
+      search: searchValue || undefined,
+      page: 0,
+    }
+    setFilters(newFilters)
+    fetchUsers(newFilters)
+  }
+
   useEffect(() => {
     fetchUsers()
   }, [])
 
   return (
     <div className="users-page">
+      <UsersSearch
+        onSearchChange={handleSearchChange}
+        currentSearch={filters.search}
+      />
       <UsersTable
         usersData={users}
         currentBlockedFilter={filters.isBlocked}
@@ -126,7 +144,7 @@ const UsersPage = () => {
         onUnblockUser={handleUnblockUser}
         onUpdateUserRoles={handleUpdateUserRoles}
       />
-      <UsersPagination 
+      <UsersPagination
         current={(filters.page || 0) + 1}
         pageSize={filters.limit || 10}
         total={totalUsers}
