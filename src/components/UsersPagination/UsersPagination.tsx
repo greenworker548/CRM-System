@@ -21,7 +21,7 @@ const UsersPagination = ({
         pageSize={pageSize}
         total={total}
         onChange={onChange}
-        pageSizeOptions={["10", "20", "50", "100"]}
+        pageSizeOptions={["20", "50", "100"]}
         showTotal={(total, range) =>
           `${range[0]}-${range[1]} of ${total} entries`
         }

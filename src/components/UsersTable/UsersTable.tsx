@@ -3,7 +3,6 @@ import {
   Table,
   Button,
   Tag,
-  Space,
   Dropdown,
   Menu,
   Modal,
@@ -24,6 +23,7 @@ import "./UsersTable.scss"
 
 interface UsersTableProps {
   usersData: User[]
+  userIsAdminValue: boolean
   onSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void
   onBlockedFilterChange: (isBlocked: boolean | undefined) => void
   currentBlockedFilter: boolean | undefined
@@ -37,6 +37,7 @@ const { Option } = Select
 
 export const UsersTable = ({
   usersData,
+  userIsAdminValue,
   onSortChange,
   onBlockedFilterChange,
   currentBlockedFilter,
@@ -125,11 +126,6 @@ export const UsersTable = ({
   )
 
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-    },
     {
       title: "Name",
       dataIndex: "username",
@@ -238,6 +234,7 @@ export const UsersTable = ({
             icon={<UserSwitchOutlined />}
             size="small"
             onClick={() => handleEditRoles(record)}
+            disabled={!userIsAdminValue}
           />
           <Button
             icon={record.isBlocked ? <UnlockOutlined /> : <LockOutlined />}
@@ -251,6 +248,7 @@ export const UsersTable = ({
             size="small"
             danger
             onClick={() => handleDelete(record)}
+            disabled={!userIsAdminValue}
           />
         </div>
       ),
