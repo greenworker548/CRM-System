@@ -6,7 +6,7 @@ import {
   deleteUser,
   blockUser,
   unblockUser,
-  updatingUserRights,
+  updateUserRights,
 } from "../../api/users"
 import { Roles, User, UserFilters } from "../../types/users"
 import { useAuth } from "../../hooks/useAuth"
@@ -95,7 +95,7 @@ const UsersPage = () => {
   // Обработчик обновления ролей пользователя
   const handleUpdateUserRoles = async (userId: number, newRoles: Roles[]) => {
     try {
-      await updatingUserRights(userId, newRoles)
+      await updateUserRights(userId, newRoles)
       await fetchUsers(filters)
     } catch (error) {
       alert("HTTP error! Restart your browser.")

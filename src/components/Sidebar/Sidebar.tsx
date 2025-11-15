@@ -18,7 +18,12 @@ const Sidebar = () => {
     try {
       const userProfile = await profile()
 
-      if (userProfile.roles.length > 1) setIsAdmin(true)
+      if (
+        userProfile?.roles?.includes("ADMIN") ||
+        userProfile?.roles?.includes("MODERATOR")
+      ) {
+        setIsAdmin(true)
+      }
     } catch (error) {
       alert("HTTP error! Restart your browser.")
     }

@@ -15,12 +15,12 @@ export async function getUsers(
   return response.data
 }
 
-export async function getUserOnId(id: number): Promise<User> {
+export async function getUserById(id: number): Promise<User> {
   const response = await apiInstance.get(`/admin/users/${id}`)
   return response.data
 }
 
-export async function updatingUserRights(
+export async function updateUserRights(
   id: number,
   roles: Roles[]
 ): Promise<User> {
@@ -30,12 +30,12 @@ export async function updatingUserRights(
   return response.data
 }
 
-export async function updatingUser(
+export async function updateUser(
   id: number,
   username?: string,
   email?: string,
   phoneNumber?: string
-): Promise<User> {
+): Promise<UserRequest> {
   const response = await apiInstance.put(`/admin/users/${id}`, {
     username,
     email,

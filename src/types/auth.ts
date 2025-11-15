@@ -36,7 +36,7 @@ export interface Token {
   refreshToken: string
 }
 
-export type Role = "ADMIN" | "USER" | "MODERATOR" | "HUILA"
+export type Role = "ADMIN" | "USER" | "MODERATOR"
 
 export interface AuthState {
   userProfile: Profile | null

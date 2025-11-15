@@ -2,9 +2,10 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Form, Input, Button } from "antd"
 import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons"
-import { updatingUser, getUserOnId } from "../../api/users"
+import { updateUser, getUserById } from "../../api/users"
 import { User, UserRequest } from "../../types/users"
 import "./UserEditPage.scss"
+import { getChangedFields } from "../../helpers/objectHelpers"
 
 const VALIDATION_RULES = {
   USERNAME_MIN_LENGTH: 1,
@@ -16,18 +17,18 @@ const ERROR_MESSAGES = {
 }
 
 const UserEditPage = () => {
-  const { userId } = useParams()
+  const { userId } = useParams<string>()
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [userData, setUserData] = useState<User | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (!userId) return
 
       try {
-        const user = await getUserOnId(Number(userId))
+        const user = await getUserById(Number(userId))
         setUserData(user)
         form.setFieldsValue({
           username: user.username,
@@ -42,37 +43,29 @@ const UserEditPage = () => {
     fetchUserData()
   }, [userId, form])
 
-  const handleSave = async (values: UserRequest) => {
+  const handleUpdateUser = async (values: UserRequest) => {
     if (!userId || !userData) return
 
     try {
-      const updateData: UserRequest = {}
-
-      if (values.username !== userData.username) {
-        updateData.username = values.username
-      }
-
-      if (values.email !== userData.email) {
-        updateData.email = values.email
-      }
-
-      if (values.phoneNumber !== (userData.phoneNumber || "")) {
-        updateData.phoneNumber = values.phoneNumber || undefined
-      }
+      const updateData = getChangedFields<UserRequest>(values, userData, [
+        "username",
+        "email",
+        "phoneNumber",
+      ])
 
       if (Object.keys(updateData).length === 0) {
         setIsEditing(false)
         return
       }
 
-      await updatingUser(
+      await updateUser(
         Number(userId),
         updateData.username,
         updateData.email,
         updateData.phoneNumber
       )
 
-      const updatedUser = await getUserOnId(Number(userId))
+      const updatedUser = await getUserById(Number(userId))
       setUserData(updatedUser)
       setIsEditing(false)
     } catch {
@@ -80,11 +73,11 @@ const UserEditPage = () => {
     }
   }
 
-  const handleEdit = () => {
+  const handleEditUser = () => {
     setIsEditing(true)
   }
 
-  const handleCancel = () => {
+  const handleCancelEditUser = () => {
     form.setFieldsValue({
       username: userData?.username,
       email: userData?.email,
@@ -93,13 +86,13 @@ const UserEditPage = () => {
     setIsEditing(false)
   }
 
-  const handleBack = () => {
+  const handleBackToUsersPage = () => {
     navigate("/users")
   }
 
   return (
     <div className="user-edit-page">
-      <Form form={form} layout="vertical" onFinish={handleSave}>
+      <Form form={form} layout="vertical" onFinish={handleUpdateUser}>
         <Form.Item
           label="Username"
           name="username"
@@ -143,16 +136,20 @@ const UserEditPage = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
+          <Button icon={<ArrowLeftOutlined />} onClick={handleBackToUsersPage}>
             Back
           </Button>
           {!isEditing ? (
-            <Button type="primary" icon={<EditOutlined />} onClick={handleEdit}>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={handleEditUser}
+            >
               Edit
             </Button>
           ) : (
             <>
-              <Button onClick={handleCancel} style={{ marginRight: 8 }}>
+              <Button onClick={handleCancelEditUser} style={{ marginRight: 8 }}>
                 Cancel
               </Button>
               <Button type="primary" htmlType="submit">

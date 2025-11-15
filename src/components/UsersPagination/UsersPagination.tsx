@@ -2,8 +2,8 @@ import { Pagination } from "antd"
 import "./UsersPagination.scss"
 
 interface UsersPaginationProps {
-  current: number | undefined
-  pageSize: number | undefined
+  current?: number
+  pageSize?: number
   total: number
   onChange: (page: number, pageSize: number) => void
 }

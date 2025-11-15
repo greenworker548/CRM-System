@@ -26,7 +26,7 @@ interface UsersTableProps {
   userIsAdminValue: boolean
   onSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void
   onBlockedFilterChange: (isBlocked: boolean | undefined) => void
-  currentBlockedFilter: boolean | undefined
+  currentBlockedFilter?: boolean
   onDeleteUser: (userId: number) => void
   onBlockUser: (userId: number) => void
   onUnblockUser: (userId: number) => void
@@ -97,6 +97,38 @@ export const UsersTable = ({
   const handleEditRoles = (user: User) => {
     setUserToEditRoles(user)
     setSelectedRoles(user.roles || [])
+  }
+
+  // хендлеры модалок
+  const handleConfirmBlock = () => {
+    if (userToBlock) {
+      if (userToBlock.isBlocked) {
+        onUnblockUser(userToBlock.id)
+      } else {
+        onBlockUser(userToBlock.id)
+      }
+      setUserToBlock(null)
+    }
+  }
+
+  const handleConfirmDelete = () => {
+    if (userToDelete) {
+      onDeleteUser(userToDelete.id)
+      setUserToDelete(null)
+    }
+  }
+
+  const handleConfirmRoleChange = () => {
+    if (userToEditRoles) {
+      onUpdateUserRoles(userToEditRoles.id, selectedRoles)
+      setUserToEditRoles(null)
+    }
+  }
+
+  const handleCancelModal = () => {
+    setUserToDelete(null)
+    setUserToBlock(null)
+    setUserToEditRoles(null)
   }
 
   const statusFilterOptions = [
@@ -269,13 +301,8 @@ export const UsersTable = ({
       <Modal
         title="Delete user?"
         open={!!userToDelete}
-        onOk={() => {
-          if (userToDelete) {
-            onDeleteUser(userToDelete.id)
-            setUserToDelete(null)
-          }
-        }}
-        onCancel={() => setUserToDelete(null)}
+        onOk={handleConfirmDelete}
+        onCancel={handleCancelModal}
         okText="Delete"
         cancelText="Cancel"
         okType="danger"
@@ -291,17 +318,8 @@ export const UsersTable = ({
       <Modal
         title={userToBlock?.isBlocked ? "Unblock the user?" : "Block the user?"}
         open={!!userToBlock}
-        onOk={() => {
-          if (userToBlock) {
-            if (userToBlock.isBlocked) {
-              onUnblockUser(userToBlock.id)
-            } else {
-              onBlockUser(userToBlock.id)
-            }
-            setUserToBlock(null)
-          }
-        }}
-        onCancel={() => setUserToBlock(null)}
+        onOk={handleConfirmBlock}
+        onCancel={handleCancelModal}
         okText={userToBlock?.isBlocked ? "Unblock" : "Block"}
         cancelText="Cancel"
         okType={userToBlock?.isBlocked ? "default" : "danger"}
@@ -318,12 +336,8 @@ export const UsersTable = ({
       <Modal
         title="Change user roles?"
         open={!!userToEditRoles}
-        onOk={() => {
-          if (userToEditRoles)
-            onUpdateUserRoles(userToEditRoles.id, selectedRoles)
-          setUserToEditRoles(null)
-        }}
-        onCancel={() => setUserToEditRoles(null)}
+        onOk={handleConfirmRoleChange}
+        onCancel={handleCancelModal}
         okText="Save"
         cancelText="Cancel"
       >
