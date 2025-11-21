@@ -1,0 +1,35 @@
+.register-page {
+  max-width: 500px;
+  min-width: 400px;
+  margin: 20px auto 0px auto;
+  background: white;
+  padding: 24px;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  text-align: center;
+
+  .register-page_title {
+    margin-bottom: 30px;
+  }
+
+  .successful-wrapper {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    span {
+      margin: 0 auto;
+      svg {
+        width: 100px;
+        height: 100px;
+        color: green;
+      }
+    }
+
+    .successful-text {
+      font-size: 17px;
+      font-weight: 500;
+    }
+  }
+}
