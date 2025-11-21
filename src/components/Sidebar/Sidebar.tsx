@@ -1,13 +1,39 @@
 import { Menu } from "antd"
-import { UserOutlined, CheckSquareOutlined } from "@ant-design/icons"
-import type { MenuProps } from "antd"
+import {
+  UserOutlined,
+  CheckSquareOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons"
 import { NavLink, useLocation } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useAuth } from "../../hooks/useAuth"
 import "./Sidebar.scss"
 
 const Sidebar = () => {
   const location = useLocation()
+  const { profile } = useAuth()
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
-  const menuItems: MenuProps["items"] = [
+  const getUserProfile = async () => {
+    try {
+      const userProfile = await profile()
+
+      if (
+        userProfile?.roles?.includes("ADMIN") ||
+        userProfile?.roles?.includes("MODERATOR")
+      ) {
+        setIsAdmin(true)
+      }
+    } catch (error) {
+      alert("HTTP error! Restart your browser.")
+    }
+  }
+
+  useEffect(() => {
+    getUserProfile()
+  }, [])
+
+  const menuItems = [
     {
       key: "/",
       icon: <CheckSquareOutlined />,
@@ -28,11 +54,28 @@ const Sidebar = () => {
     },
   ]
 
+  const adminMenuItems = [
+    {
+      key: "/users",
+      icon: <UserSwitchOutlined />,
+      label: (
+        <NavLink to="/users" className="sidebar__link">
+          Users
+        </NavLink>
+      ),
+    },
+  ]
+
+  const items = [...menuItems]
+  if (isAdmin) {
+    items.push(...adminMenuItems)
+  }
+
   return (
     <div className="sidebar">
       <Menu
         mode="inline"
-        items={menuItems}
+        items={items}
         defaultSelectedKeys={[location.pathname]}
       />
     </div>

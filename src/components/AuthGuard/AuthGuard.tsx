@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../../hooks/useAuth"
-import { apiAuthInstance } from "../../api/auth"
+import { apiInstance } from "../../api/instance"
 import { Spin } from "antd"
 import { tokenManager } from "../../utils/tokenManager"
 
@@ -30,14 +30,14 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!isAuthenticated) return
 
-    const responseInterceptor = apiAuthInstance.interceptors.response.use(
+    const responseInterceptor = apiInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response?.status === 401 && isAuthenticated) {
           try {
             const newAccessToken = await refresh()
             error.config.headers.Authorization = `Bearer ${newAccessToken}`
-            return apiAuthInstance.request(error.config)
+            return apiInstance.request(error.config)
           } catch (refreshError) {
             exit()
           }
@@ -47,12 +47,12 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     )
 
     return () => {
-      apiAuthInstance.interceptors.response.eject(responseInterceptor)
+      apiInstance.interceptors.response.eject(responseInterceptor)
     }
   }, [isAuthenticated, exit, refresh])
 
   useEffect(() => {
-    const requestInterceptor = apiAuthInstance.interceptors.request.use(
+    const requestInterceptor = apiInstance.interceptors.request.use(
       (config) => {
         const accessToken = tokenManager.getAccessToken()
         if (accessToken) {
@@ -64,7 +64,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     )
 
     return () => {
-      apiAuthInstance.interceptors.request.eject(requestInterceptor)
+      apiInstance.interceptors.request.eject(requestInterceptor)
     }
   }, [])
 

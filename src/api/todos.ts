@@ -5,15 +5,7 @@ import {
   ActivTodosStatus,
   TodoRequest,
 } from "../types/todo"
-import axios, { AxiosInstance } from "axios"
-
-const apiInstance: AxiosInstance = axios.create({
-  baseURL: "https://easydev.club/api/v1",
-  timeout: 5000,
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
+import { apiInstance } from "./instance"
 
 export async function getTodos(
   status: ActivTodosStatus = "all"

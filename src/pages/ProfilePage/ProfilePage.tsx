@@ -1,28 +1,11 @@
 import "./ProfilePage.scss"
 import { Typography, Button } from "antd"
 import { useAuth } from "../../hooks/useAuth"
-import { useEffect, useState } from "react"
-import { getProfile } from "../../api/auth"
-import { Profile } from "../../types/auth"
 
 const { Title, Text } = Typography
 
 const ProfilePage = () => {
-  const [userProfile, setUserProfile] = useState<Profile | null>(null)
-  const { exit } = useAuth()
-
-  const getUserProfile = async () => {
-    try {
-      const response = await getProfile()
-      setUserProfile(response)
-    } catch (error) {
-      alert("HTTP error! Restart your browser.")
-    }
-  }
-
-  useEffect(() => {
-    getUserProfile()
-  }, [])
+  const { userProfile, exit } = useAuth()
 
   const handlelogout = () => {
     try {

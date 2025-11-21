@@ -39,6 +39,7 @@ export interface Token {
 export type Role = "ADMIN" | "USER" | "MODERATOR"
 
 export interface AuthState {
+  userProfile: Profile | null
   isAuthenticated: boolean
   accessToken?: string | null
   refreshToken: string | null
