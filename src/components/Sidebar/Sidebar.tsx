@@ -66,11 +66,16 @@ const Sidebar = () => {
     },
   ]
 
+  const items = [...menuItems]
+  if (isAdmin) {
+    items.push(...adminMenuItems)
+  }
+
   return (
     <div className="sidebar">
       <Menu
         mode="inline"
-        items={isAdmin ? [...menuItems, ...adminMenuItems] : menuItems}
+        items={items}
         defaultSelectedKeys={[location.pathname]}
       />
     </div>

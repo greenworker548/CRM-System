@@ -1,15 +1,11 @@
-export const getChangedFields = <T>(
-  newData: T,
-  oldData: T,
-  fields: (keyof T)[]
-): Partial<T> => {
+export const getChangedFields = <T>(newData: T, oldData: T): Partial<T> => {
   const changedFields: Partial<T> = {}
 
-  fields.forEach((field) => {
-    if (newData[field] !== oldData[field]) {
-      changedFields[field] = newData[field]
+  for (const key in newData) {
+    if (newData[key] !== oldData[key]) {
+      changedFields[key] = newData[key]
     }
-  })
+  }
 
   return changedFields
 }
